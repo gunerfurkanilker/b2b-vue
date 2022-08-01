@@ -1,5 +1,6 @@
 
 import Swal from "sweetalert2";
+import Vue from "vue";
 
 export const state = {
     cartList: []
@@ -16,8 +17,7 @@ export const mutations = {
         if (productItemInCart) {
             productItemInCart.quantity +=data.number;
             let indexProductItemInCart = state.cartList.indexOf(productItemInCart);
-            state.cartList.splice(indexProductItemInCart, 1);
-            state.cartList.push(productItemInCart);
+            Vue.set(state.cartList, indexProductItemInCart, productItemInCart);
         }
     },
     removeProductFromCartList(state, data) {
