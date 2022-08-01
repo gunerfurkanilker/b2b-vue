@@ -372,7 +372,7 @@
           variant="black"
         >
           <template v-slot:button-content>
-            <i class="bx bx-basket bx-tada"></i>
+            <i class="bx bx-basket" :class="{'bx-tada': cartList.length > 0}"></i>
             <span class="badge bg-danger rounded-pill">{{ cartList.map(item => item.quantity).reduce((prev, curr) => prev + curr, 0) }}</span>
           </template>
 
@@ -389,7 +389,7 @@
               <div class="d-flex">
                 <div class="d-flex flex-column p-0 pe-2">
                   <b-button class="mb-1" variant="success" pill size="sm" @click="changeQuantityOfProduct({product: item, number: 1})"><i class="mdi mdi-plus"></i></b-button>
-                  <b-button class="mb-1" variant="secondary" pill size="sm" @click="changeQuantityOfProduct({product: item, number: -1})" :disabled="item.quantity < 2"><i class="mdi mdi-minus"></i></b-button> 
+                  <b-button class="mb-1" variant="secondary" pill size="sm" @click="changeQuantityOfProduct({product: item, number: -1})" :disabled="item.quantity < 2"><i class="mdi mdi-minus"></i></b-button>
                 </div>
                 
                 <div class="flex-grow-1">
@@ -405,6 +405,9 @@
                       Miktar : {{ item.quantity }}
                     </p>
                   </div>
+                </div>
+                <div>
+                  <b-button class="mb-1" variant="danger" pill size="sm" @click="removeProductFromCartList(item)"><i class="mdi mdi-delete"></i></b-button> 
                 </div>
               </div>
             </a>
@@ -694,7 +697,7 @@ export default {
     this.flag = this.value.flag;
   },
   methods: {
-    ...mapActions("cart", ["changeQuantityOfProduct"]),
+    ...mapActions("cart", ["changeQuantityOfProduct","removeProductFromCartList"]),
     toggleRightSidebar() {
       this.$parent.toggleRightSidebar();
     },

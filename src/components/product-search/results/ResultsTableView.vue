@@ -56,7 +56,7 @@
                   v-on="on"
                   icon
                   color="secondary"
-                  :disabled="data.item.quantity <= 1"
+                  :disabled="cartList.find(e => e.stock_code == data.item.stock_code).quantity <= 1"
                   @click="changeQuantityOfProduct({product: data.item, number: -1})"
                 >
                   <v-icon>mdi-minus</v-icon>

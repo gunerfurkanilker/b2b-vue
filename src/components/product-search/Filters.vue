@@ -8,6 +8,7 @@
                 v-model="treeCategories"
                 :items="itemsCategories"
                 selectable
+                open-all
                 item-key="name"
               >
                 <template v-slot:label="{ item }">
@@ -21,6 +22,7 @@
                 v-model="treeBrands"
                 :items="itemsBrands"
                 selectable
+                open-all
                 item-key="name"
               >
                 <template v-slot:label="{ item }">
@@ -101,7 +103,7 @@ export default {
       itemsBrands: [
         {
           id: 1,
-          name: "Tüm Markalar :",
+          name: "Tüm Markalar",
           children: [
             { id: 2, name: "Marka 1" },
             { id: 3, name: "Marka 2" },
