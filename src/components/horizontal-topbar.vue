@@ -35,12 +35,12 @@
         <!-- App Search-->
         <form class="app-search d-none d-lg-block">
           <div class="position-relative">
-            <input type="text" class="form-control" placeholder="Search..." />
+            <input type="text" class="form-control" placeholder="Arama Yapın..." />
             <span class="bx bx-search-alt"></span>
           </div>
         </form>
-
-        <b-dropdown
+        <!--
+          <b-dropdown
           variant="black"
           class="dropdown-mega d-none d-lg-block ms-2"
           toggle-class="header-item"
@@ -253,10 +253,13 @@
             </div>
           </div>
         </b-dropdown>
+        -->
+        
       </div>
 
       <div class="d-flex">
-        <b-dropdown
+        <!--
+          <b-dropdown
           class="d-inline-block d-lg-none ms-2"
           variant="black"
           menu-class="dropdown-menu-lg p-0 dropdown-menu-end"
@@ -285,10 +288,6 @@
             </div>
           </form>
         </b-dropdown>
-        <div class="text-light">
-          {{ current.title }}
-        </div>
-
         <b-dropdown
           class="d-none d-lg-inline-block noti-icon"
           menu-class="dropdown-menu-lg dropdown-menu-end"
@@ -353,6 +352,8 @@
             </div>
           </div>
         </b-dropdown>
+        
+        
 
         <div class="dropdown d-none d-lg-inline-block ms-1">
           <button
@@ -363,6 +364,71 @@
             <i class="bx bx-fullscreen"></i>
           </button>
         </div>
+        -->
+
+        <b-dropdown
+          menu-class="dropdown-menu-lg p-0 dropdown-menu-end"
+          toggle-class="header-item noti-icon"
+          variant="black"
+        >
+          <template v-slot:button-content>
+            <i class="bx bx-basket bx-tada"></i>
+            <span class="badge bg-danger rounded-pill">{{ cartList.map(item => item.quantity).reduce((prev, curr) => prev + curr, 0) }}</span>
+          </template>
+
+          <div class="p-3 bg-dark ">
+            <div class="row align-items-center">
+              <div class="col">
+                <h6 class="text-light">Seçili Cari : {{ current.title }}</h6>
+                
+              </div>
+            </div>
+          </div>
+          <simplebar style="max-height: 230px">
+            <a href="javascript: void(0);" class="text-reset notification-item" v-for="item in cartList" :key="item.stock_code">
+              <div class="d-flex">
+                <div class="d-flex flex-column p-0 pe-2">
+                  <b-button class="mb-1" variant="success" pill size="sm" @click="changeQuantityOfProduct({product: item, number: 1})"><i class="mdi mdi-plus"></i></b-button>
+                  <b-button class="mb-1" variant="secondary" pill size="sm" @click="changeQuantityOfProduct({product: item, number: -1})" :disabled="item.quantity < 2"><i class="mdi mdi-minus"></i></b-button> 
+                </div>
+                
+                <div class="flex-grow-1">
+                  <h6 class="mt-0 mb-1">
+                    {{ item.stock_name }}
+                  </h6>
+                  <div class="font-size-12 text-muted">
+                    <p class="mb-1">
+                      Stok Kodu : {{ item.stock_code }}
+                    </p>
+                    <p class="mb-0">
+                      <i class="mdi mdi-clock-outline"></i>
+                      Miktar : {{ item.quantity }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </simplebar>
+          <div class="p-5 border-top d-grid text-center" v-if="cartList.length < 1">
+            <h6>Sepetiniz Boş</h6>
+            <p>Ürün eklemek için Ürün Arama sayfasına gidin</p>
+            <router-link :to="'/product-search'">
+              <b-button variant="success" size="sm" pill>Ürün Arama</b-button>
+            </router-link>
+            
+          </div>
+          <div class="p-2 border-top d-grid" v-if="cartList.length > 0">
+            <a
+              class="btn btn-sm btn-link font-size-14 text-center"
+              href="javascript:void(0)"
+            >
+              <i class="mdi mdi-arrow-right-circle me-1"></i>
+              <span key="t-view-more">
+                Sepete Git</span
+              >
+            </a>
+          </div>
+        </b-dropdown>
 
         <b-dropdown
           menu-class="dropdown-menu-lg p-0 dropdown-menu-end"
@@ -505,11 +571,11 @@
           <template v-slot:button-content>
             <img
               class="rounded-circle header-profile-user"
-              src="@/assets/images/users/avatar-1.jpg"
+              src="@/assets/images/users/avatar-7.jpg"
               alt="Header Avatar"
             />
             <span class="d-none d-xl-inline-block ms-1">{{
-              $t("navbar.dropdown.henry.text")
+              'İlker Furkan Güner'
             }}</span>
             <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
           </template>
@@ -563,7 +629,7 @@ import i18n from "../i18n";
 import simplebar from "simplebar-vue";
 import { layoutComputed } from "@/state/helpers";
 
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 /**
  * Horizontal-topbar component
@@ -582,6 +648,7 @@ export default {
   computed: {
     ...layoutComputed,
     ...mapState("current", ["current"]),
+    ...mapState("cart", ["cartList"])
   },
   components: {
     simplebar,
@@ -627,6 +694,7 @@ export default {
     this.flag = this.value.flag;
   },
   methods: {
+    ...mapActions("cart", ["changeQuantityOfProduct"]),
     toggleRightSidebar() {
       this.$parent.toggleRightSidebar();
     },

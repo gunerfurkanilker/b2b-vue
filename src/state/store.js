@@ -7,7 +7,7 @@ import modules from './modules'
 Vue.use(Vuex)
 
 const persistedStates = createPersistedState({
-  paths: ['current']
+  paths: ['current',"cart"]
 })
 
 const store = new Vuex.Store({

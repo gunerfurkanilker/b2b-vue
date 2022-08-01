@@ -213,6 +213,11 @@ export const actions = {
                 label: 'Net Fiyat',
                 sortable: false,
                 
+              },
+              {
+                key: 'cart_operations',
+                label: 'Sepet İşlemleri',
+                sortable: false,
               }
             ]);  
             context.commit("setListDataLoading",false)

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
-import 'vuetify/dist/vuetify.min.css'
+import 'vuetify/dist/vuetify.css'
 
 Vue.use(Vuetify)
 
@@ -14,6 +14,7 @@ const opts = {
                 error: '#dc3545',
                 petrol: '#17a499',
                 background: 'transparent',
+                danger: '#ff0000'
             }
         },
         options: {
