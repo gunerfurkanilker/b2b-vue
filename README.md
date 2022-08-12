@@ -1,5 +1,7 @@
 # Skote - Vue based admin template
 
+!!! yarn install yapıldıktan sonra node_modules/vuetify/dist/vuetify.css dosyası buradaki ile değiştirilmelidir. !!!
+
 ## Project setup
 ```
 yarn install
