@@ -1,6 +1,24 @@
 <template>
   <Layout>
-    <h1>Dashboard</h1>
+    <h1>10.08.2022</h1>
+    <dl>
+      <dt>Sipariş Listesi</dt>
+      <dd>Sipariş Listesi, B2B Sipariş Listesi, Bekleyen Siparişler sayfaları hazırlandı.</dd>
+    </dl>
+    <h1>8.08.2022</h1>
+    <dl>
+      <dt>Ürün Arama</dt>
+      <dd>Ürün filtreleme,tablo görünüm, kart görünüm, sepete ürün ekleme, ürün çıkarma, sepetteki ürün miktarını değiştirme, cari seçilmemiş ise uyarı mesajları</dd>
+      <dd>Seçilen ürünün sepette vuex-persisted-state yardımı ile tutulması. Sayfa yenilenmesi pc açıp kapama bile veri kaybına yol açmaz.  Veri tarayıcının belleğinde tutulur</dd>
+      <dt>Cari Listesi</dt>
+      <dd>Cari tablo listeleme, sepet için cari seçimi, bu seçimin vuex-persisted-state olarak tutulması.</dd>
+      <dt>Sepet</dt>
+      <dd>Sağ üstteki sepet butonuna ürün arama kısmından eklenen ürünlerin gösterimi, +1 -1 şeklinde arttırıp azaltabilme, ürün silme</dd>
+      <dd>Sağ üstteki sepet ikonuna tıkladıktan sonra açılan dropdown'dan sepete git'e tıklanıldığında : Sepet listeleme, sepetten çıkarma, miktar değiştirme işlemleri</dd>
+      <dt>Ödeme İşlemleri</dt>
+      <dd>Sepet sayfasında siparişi tamamla butonuna basıldıktan sonra açılan sayfadır</dd>
+      <dd>Kullanıcıdan bu sayfada teslimat ve ödeme bilgileri girilmesi istenir</dd>
+    </dl>
   </Layout>
 </template>
 

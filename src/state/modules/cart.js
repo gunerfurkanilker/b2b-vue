@@ -11,25 +11,28 @@ export const mutations = {
         data.quantity = 1;
         state.cartList.push(data);
     },
-    changeQuantityOfProduct(state, data){
-        
+    changeQuantityOfProduct(state, data) {
         let productItemInCart = state.cartList.find(e => e.stock_code == data.product.stock_code)
         if (productItemInCart) {
-            productItemInCart.quantity +=data.number;
+            if(data.definiteVal)
+                productItemInCart.quantity = data.definiteVal;
+            else
+                productItemInCart.quantity += data.number;
             let indexProductItemInCart = state.cartList.indexOf(productItemInCart);
             Vue.set(state.cartList, indexProductItemInCart, productItemInCart);
         }
     },
     removeProductFromCartList(state, data) {
-        let productItemInCart = state.cartList.find(e => e.stock_code == data.stock_code)
-        if(productItemInCart)
-        {
+        var productItemInCart = state.cartList.find(e => e.stock_code == data.stock_code)
+        if (productItemInCart) {
             let indexProductItemInCart = state.cartList.indexOf(productItemInCart);
             if (indexProductItemInCart > -1) {
                 state.cartList.splice(indexProductItemInCart, 1);
             }
         }
-        
+
+
+
 
     }
 };
@@ -63,11 +66,25 @@ export const actions = {
         }
 
     },
-    removeProductFromCartList(context, product, number) {
-        context.commit("removeProductFromCartList", product, number);
+    removeProductFromCartList(context, product) {
+        Swal.fire({
+            title: "Ürün Silme İşlemi",
+            text: product.stock_name + " adlı ürünü silmek istediğinize emin misiniz ?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Evet",
+            cancelButtonText: "Hayır"
+        })
+            .then(function (confirm) {
+                if (confirm.isConfirmed) {
+                    context.commit("removeProductFromCartList", product);
+                }
+
+            });
+
     },
-    changeQuantityOfProduct(context, product, number ){
-        context.commit("changeQuantityOfProduct", product, number);
+    changeQuantityOfProduct(context, product, number = 1, definiteVal = false) {
+        context.commit("changeQuantityOfProduct", product, number ,definiteVal);
     }
 
 };

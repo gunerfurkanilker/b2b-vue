@@ -1,34 +1,72 @@
 <template>
-  <Layout>
-    <PageHeader :title="'Cari Listesi'" :items="breadcrumbArray"></PageHeader>
-    <v-app>
-      <div class="row">
-      <div class="col-lg-12">
-        <Results></Results>
-      </div>
-    </div>
-    </v-app>
-    
-  </Layout>
+  <div class="card">
+          <div class="card-body" style="position:relative">
+            <h4 class="card-title mb-4">Filtre</h4>
+            <div>
+              <h5 class="font-size-14 mb-3">Kategoriler</h5>
+              <v-treeview
+                v-model="treeCategories"
+                :items="itemsCategories"
+                selectable
+                item-key="name"
+              >
+                <template v-slot:label="{ item }">
+                  <a @click="openDialog(item)">{{ item.name }}</a>
+                </template>
+              </v-treeview>
+            </div>
+            <div class="mt-4 pt-3">
+              <h5 class="font-size-14 mb-3">Markalar</h5>
+              <v-treeview
+                v-model="treeBrands"
+                :items="itemsBrands"
+                selectable
+                item-key="name"
+              >
+                <template v-slot:label="{ item }">
+                  <a @click="openDialog(item)">{{ item.name }}</a>
+                </template>
+              </v-treeview>
+            </div>
+            <div class="mt-4 pt-3">
+              <h5 class="font-size-14 mb-3">Fiyat</h5>
+              <vue-slide-bar
+                v-model="sliderPrice"
+                :min="0"
+                :max="1000"
+              >   
+              </vue-slide-bar>
+              <div class="d-flex mt-3 ">
+                <div class="text-muted">
+                  0 TL
+                </div>
+                <div class="text-muted ms-auto">
+                  {{ sliderPrice + ' TL' }}
+                </div>
+                
+              </div>
+            </div>
+            <div class="mt-4 pt-3 text-center">
+              <b-button class="w-100" block variant="success" size="md">
+                <i
+                  class="bx bx-check-double font-size-16 align-middle me-1"
+                ></i>
+                Filtrele
+              </b-button>
+            </div>
+              
+          </div>
+        </div>
 </template>
 
 <script>
-import Layout from "@/pages/layout/main.vue";
-import PageHeader from "@/components/page-header";
-import Results from "@/components/current/Results.vue"
+import VueSlideBar from "vue-slide-bar";
 
 export default {
-  page: {
-    title: "Cari Listesi",
-    meta: [{ name: "description", content: "Cari Listesi" }],
-  },
   components: {
-    Layout,
-    PageHeader,
-    Results
+    VueSlideBar,
   },
   data() {
-    
     return {
       currentPage: 1,
       treeCategories: [],
@@ -49,11 +87,7 @@ export default {
       ],
       breadcrumbArray: [
         {
-          text: "Cari",
-          active: false,
-        },
-        {
-          text: "Cari Listesi",
+          text: "Products",
           active: true,
         },
       ],

@@ -50,19 +50,19 @@ export const menuItems = [
             {
                 id: 9,
                 label: 'Siparişler',
-                link: '/pages/coming-soon',
+                link: '/order-list',
                 parentId: 8
             },
             {
                 id: 10,
                 label: 'B2B Siparişleri',
-                link: '/pages/coming-soon',
+                link: '/b2b-order-list',
                 parentId: 8
             },
             {
                 id: 11,
                 label: "Bekleyen Siparişler",
-                link: "/pages/coming-soon",
+                link: "/pending-order-list",
                 parentId: 8
             }
         ]

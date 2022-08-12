@@ -20,6 +20,36 @@ export default [
     component: () => import("../pages/views/current/CurrentList.vue"),
   },
   {
+    path: "/cart",
+    name: "cart",
+    component: () => import("../pages/views/cart/Cart.vue"),
+  },
+  {
+    path: "/cart/checkout",
+    name: "cartCheckout",
+    component: () => import("../pages/views/cart/Checkout.vue"),
+  },
+  {
+    path: "/order-list",
+    name: "orderList",
+    component: () => import("../pages/views/order/OrderList.vue"),
+  },
+  {
+    path: "/b2b-order-list",
+    name: "b2bOrderList",
+    component: () => import("../pages/views/order/B2BOrderList.vue"),
+  },
+  {
+    path: "/pending-order-list",
+    name: "waitingOrderList",
+    component: () => import("../pages/views/order/WaitingOrderList.vue"),
+  },
+  {
+    path: "/order-detail",
+    name: "orderDetail",
+    component: () => import("../pages/views/order/OrderDetail.vue"),
+  },
+  {
     path: "/404",
     name: "404",
     component: require("./views/utility/404").default,

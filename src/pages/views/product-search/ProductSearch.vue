@@ -21,6 +21,10 @@ import Filters from "@/components/product-search/Filters.vue";
 import Results from "@/components/product-search/Results.vue";
 
 export default {
+  page: {
+    title: "Ürün Arama",
+    meta: [{ name: "description", content: "Sepet" }],
+  },
   components: {
     Layout,
     PageHeader,

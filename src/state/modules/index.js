@@ -40,7 +40,6 @@ const storeData = { modules: {} }
       .split(/\//)
       // camelCase all module namespaces and names.
       .map(camelCase)
-      console.log("MODULE_PATH", modulePath);
 
     // Get the modules object for the current path.
     const { modules } = getNamespace(storeData, modulePath)

@@ -1,60 +1,107 @@
 <template>
   <div class="row">
-    <div
-      v-for="data in getCardViewPagination"
-      :key="data.id"
-      class="col-xl-4 col-sm-6"
-    >
+    <div v-for="data in listDatas" :key="data.id" class="col-xl-4 col-sm-6">
       <div class="card">
         <div class="card-title pt-2 text-end">
-          <v-tooltip top>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                class="mx-2"
-                fab
-                dark
-                x-small
-                color="success"
-                v-bind="attrs"
-                v-on="on"
+          <div class="d-flex justify-content-end">
+            <div
+            class="d-flex"
+              v-if="cartList.filter((e) => e.stock_code === data.stock_code).length > 0"
+            >
+              <label for="" class="me-2 my-auto d-inline">Miktar</label>
+              <input
+                type="number"
+                :value="
+                  cartList.find((e) => e.stock_code == data.stock_code).quantity
+                "
+                :min="1"
+                class="form-control"
+                style="width: 60px"
+                @change="
+                  (e) =>
+                    changeQuantityOfProduct({
+                      product: data,
+                      definiteVal: parseInt(e.target.value),
+                    })
+                "
+              />
+              <v-tooltip
+                bottom
+                
               >
-                <v-icon dark> mdi-cart-arrow-down </v-icon>
-              </v-btn>
-            </template>
-            <span>Sepete Ekle</span>
-          </v-tooltip>
-          <v-tooltip top>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                class="mx-2"
-                fab
-                dark
-                x-small
-                color="info"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon dark> mdi-sticker-check </v-icon>
-              </v-btn>
-            </template>
-            <span>Muadil Kod Düzenle</span>
-          </v-tooltip>
-          <v-tooltip top>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                class="mx-2"
-                fab
-                dark
-                x-small
-                color="dark"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon dark> mdi-file-document-edit </v-icon>
-              </v-btn>
-            </template>
-            <span>Stok Özellikleri Düzenle</span>
-          </v-tooltip>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    icon
+                    color="danger"
+                    @click="removeProductFromCartList(data)"
+                  >
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </template>
+                <span>Sepetten Çıkar</span>
+              </v-tooltip>
+            </div>
+
+            <v-tooltip
+              top
+              v-if="
+                cartList.filter((e) => e.stock_code === data.stock_code)
+                  .length < 1
+              "
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="mx-2"
+                  fab
+                  dark
+                  x-small
+                  color="success"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="addToCart(data)"
+                >
+                  <v-icon dark> mdi-cart-arrow-down </v-icon>
+                </v-btn>
+              </template>
+              <span>Sepete Ekle</span>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="mx-2"
+                  fab
+                  dark
+                  x-small
+                  color="info"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="openMuadilKodDialog(data)"
+                >
+                  <v-icon dark> mdi-sticker-check </v-icon>
+                </v-btn>
+              </template>
+              <span>Muadil Kod Düzenle</span>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="mx-2"
+                  fab
+                  dark
+                  x-small
+                  color="dark"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="openStokOzellikDialog(data)"
+                >
+                  <v-icon dark> mdi-file-document-edit </v-icon>
+                </v-btn>
+              </template>
+              <span>Stok Özellikleri Düzenle</span>
+            </v-tooltip>
+          </div>
         </div>
         <div class="card-body">
           <div class="position-relative">
@@ -63,14 +110,16 @@
                 >-{{ data.discount }}%</span
               >
             </div>
-            <v-carousel style="height:300px" cycle interval="5000" hide-delimiters>
-              <v-carousel-item
-                v-for="(item, i) in data.images"
-                :key="i"
-              >
-                <v-sheet  height="300px" tile>
+            <v-carousel
+              style="height: 300px"
+              cycle
+              interval="5000"
+              hide-delimiters
+            >
+              <v-carousel-item v-for="(item, i) in data.images" :key="i">
+                <v-sheet height="300px" tile>
                   <v-row class="fill-height" align="center" justify="center">
-                    <img  :src="item" alt="" @click="expandImage(data.images)">
+                    <img :src="item" alt="" @click="expandImage(data.images)" />
                   </v-row>
                 </v-sheet>
               </v-carousel-item>
@@ -125,14 +174,32 @@
         </div>
       </div>
     </div>
+    <MuadilKodDialog
+      :title="'Muadil Kod Düzenle'"
+      :showDialog="muadilKodDialog"
+      @dialogChange="(e) => (muadilKodDialog = e)"
+      :product="muadilKodDialogData"
+    ></MuadilKodDialog>
+    <StokOzellikDialog
+      :title="'Ürün Özellik'"
+      :showDialog="stokOzellikDialog"
+      @dialogChange="(e) => (stokOzellikDialog = e)"
+      :product="stokOzellikDialogData"
+    ></StokOzellikDialog>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import Swal from "sweetalert2";
+import { mapState, mapGetters, mapActions } from "vuex";
+import MuadilKodDialog from "@/components/product-search/dialogs/MuadilKodDialog.vue";
+import StokOzellikDialog from "@/components/product-search/dialogs/StokOzellikDialog.vue";
 
 export default {
-  components: {},
+  components: {
+    MuadilKodDialog,
+    StokOzellikDialog,
+  },
   computed: {
     ...mapState("productSearch", [
       "listDatas",
@@ -140,6 +207,8 @@ export default {
       "listDataLoading",
     ]),
     ...mapGetters("productSearch", ["getCardViewPagination"]),
+    ...mapState("current", ["current"]),
+    ...mapState("cart", ["cartList"]),
   },
   data() {
     return {
@@ -440,18 +509,46 @@ export default {
           ],
         },
       ],
+      muadilKodDialog: false,
+      muadilKodDialogData: null,
+      stokOzellikDialog: false,
+      stokOzellikDialogData: null,
     };
   },
   methods: {
+    ...mapActions("cart", [
+      "addProductToCartList",
+      "removeProductFromCartList",
+      "changeQuantityOfProduct",
+    ]),
+    openMuadilKodDialog(data) {
+      this.muadilKodDialogData = data;
+      this.muadilKodDialog = true;
+    },
+    openStokOzellikDialog(data) {
+      this.stokOzellikDialogData = data;
+      this.stokOzellikDialog = true;
+    },
     clickLabel(item) {
       console.log("Click", item);
     },
-    expandImage(images){
-      
+    expandImage(images) {
       this.$viewerApi({
-          images:images
+        images: images,
+      });
+    },
+    addToCart(product) {
+      if (!this.current) {
+        Swal.fire({
+          title: "Ürün Ekleme Başarısız",
+          text: "Cari listesinden cari seçimi yapmalısınız",
+          icon: "error",
+          confirmButtonText: "Tamam",
         });
-    }
+      } else {
+        this.addProductToCartList(product);
+      }
+    },
   },
 };
 </script>

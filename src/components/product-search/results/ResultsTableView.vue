@@ -10,6 +10,7 @@
         :current-page="currentPage"
         :busy="listDataLoading"
       >
+        <template> </template>
         <template #cell(images)="data">
           <img
             style="width: 50px; height: 50px"
@@ -18,8 +19,52 @@
             @click="expandImage(data.item.images)"
           />
         </template>
+        <template #cell(other_operations)="data">
+          <div class="d-flex">
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="mx-1"
+                  fab
+                  dark
+                  x-small
+                  color="info"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="openMuadilKodDialog(data.item)"
+                >
+                  <v-icon dark> mdi-sticker-check </v-icon>
+                </v-btn>
+              </template>
+              <span>Muadil Kod Düzenle</span>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="mx-1"
+                  fab
+                  dark
+                  x-small
+                  color="dark"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="openStokOzellikDialog(data.item)"
+                >
+                  <v-icon dark> mdi-file-document-edit </v-icon>
+                </v-btn>
+              </template>
+              <span>Stok Özellikleri Düzenle</span>
+            </v-tooltip>
+          </div>
+        </template>
         <template #cell(cart_operations)="data">
-          <v-tooltip bottom v-if="cartList.filter(e => e.stock_code === data.item.stock_code).length < 1">
+          <v-tooltip
+            bottom
+            v-if="
+              cartList.filter((e) => e.stock_code === data.item.stock_code)
+                .length < 1
+            "
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
@@ -33,45 +78,45 @@
             </template>
             <span>Sepete Ekle</span>
           </v-tooltip>
-          <div class="d-flex p-0 pe-2" v-if="cartList.filter(e => e.stock_code === data.item.stock_code).length > 0">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  icon
-                  color="success"
-                  @click="changeQuantityOfProduct({product: data.item, number: 1})"
-                >
-                  <v-icon>mdi-plus</v-icon>
-                </v-btn>
-              </template>
-              <span>Miktar Attır</span>
-            </v-tooltip>
-            <span class="mt-2">{{ cartList.find(e => e.stock_code == data.item.stock_code) ? cartList.find(e => e.stock_code == data.item.stock_code).quantity : 0 }}</span>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  icon
-                  color="secondary"
-                  :disabled="cartList.find(e => e.stock_code == data.item.stock_code).quantity <= 1"
-                  @click="changeQuantityOfProduct({product: data.item, number: -1})"
-                >
-                  <v-icon>mdi-minus</v-icon>
-                </v-btn>
-              </template>
-              <span>Miktar Azalt</span>
-            </v-tooltip>
-            <v-tooltip bottom v-if="cartList.filter(e => e.stock_code === data.item.stock_code).length > 0">
+          <div
+            class="d-flex"
+            v-if="
+              cartList.filter((e) => e.stock_code === data.item.stock_code)
+                .length > 0
+            "
+          >
+            <input
+              type="number"
+              :value="
+                cartList.find((e) => e.stock_code == data.item.stock_code)
+                  .quantity
+              "
+              :min="1"
+              class="form-control"
+              style="width: 60px"
+              @change="
+                (e) =>
+                  changeQuantityOfProduct({
+                    product: data.item,
+                    definiteVal: parseInt(e.target.value),
+                  })
+              "
+            />
+
+            <v-tooltip
+              bottom
+              v-if="
+                cartList.filter((e) => e.stock_code === data.item.stock_code)
+                  .length > 0
+              "
+            >
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
                   icon
                   color="danger"
-                  @click="removeFromCard(data.item)"
+                  @click="removeProductFromCartList(data.item)"
                 >
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
@@ -82,10 +127,26 @@
         </template>
         <template #table-busy>
           <div class="text-center">
-            <b-spinner variant="primary" label="Text Centered"></b-spinner>
+            <b-spinner
+              variant="primary"
+              size="lg"
+              label="Text Centered"
+            ></b-spinner>
           </div>
         </template>
       </b-table>
+      <MuadilKodDialog
+        :title="'Muadil Kod Düzenle'"
+        :showDialog="muadilKodDialog"
+        @dialogChange="(e) => (muadilKodDialog = e)"
+        :product="muadilKodDialogData"
+      ></MuadilKodDialog>
+      <StokOzellikDialog
+        :title="'Ürün Özellik'"
+        :showDialog="stokOzellikDialog"
+        @dialogChange="(e) => (stokOzellikDialog = e)"
+        :product="stokOzellikDialogData"
+      ></StokOzellikDialog>
     </div>
   </div>
 </template>
@@ -93,8 +154,14 @@
 <script>
 import Swal from "sweetalert2";
 import { mapState, mapActions } from "vuex";
+import MuadilKodDialog from "@/components/product-search/dialogs/MuadilKodDialog.vue";
+import StokOzellikDialog from "@/components/product-search/dialogs/StokOzellikDialog.vue";
 
 export default {
+  components: {
+    MuadilKodDialog,
+    StokOzellikDialog,
+  },
   props: {
     perPage: {
       type: Number,
@@ -114,35 +181,45 @@ export default {
     ...mapState("cart", ["cartList"]),
   },
   data() {
-    return {};
+    return {
+      muadilKodDialog: false,
+      muadilKodDialogData: null,
+      stokOzellikDialog: false,
+      stokOzellikDialogData: null,
+    };
   },
-  mounted(){
-    
-  },
+  mounted() {},
   methods: {
-    ...mapActions("cart", ["addProductToCartList","removeProductFromCartList","changeQuantityOfProduct"]),
+    ...mapActions("cart", [
+      "addProductToCartList",
+      "removeProductFromCartList",
+      "changeQuantityOfProduct",
+    ]),
     addToCart(product) {
-      if(!this.current)
-      {
+      console.log("Test",this.current);
+      if (!this.current) {
         Swal.fire({
           title: "Ürün Ekleme Başarısız",
           text: "Cari listesinden cari seçimi yapmalısınız",
           icon: "error",
           confirmButtonText: "Tamam",
         });
-      }
-      else{
+      } else {
         this.addProductToCartList(product);
       }
     },
-    removeFromCard(product) {
-      this.removeProductFromCartList(product);
-    },
-
     expandImage(images) {
       this.$viewerApi({
         images: images,
       });
+    },
+    openMuadilKodDialog(data) {
+      this.muadilKodDialogData = data;
+      this.muadilKodDialog = true;
+    },
+    openStokOzellikDialog(data) {
+      this.stokOzellikDialogData = data;
+      this.stokOzellikDialog = true;
     },
   },
 };

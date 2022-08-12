@@ -2,7 +2,7 @@ export const state = {
   listDatas: [],
   listHeaders: [],
   listDataLoading: false,
-  current: {}
+  current: false
 };
 
 export const mutations = {

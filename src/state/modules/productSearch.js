@@ -175,50 +175,56 @@ export const actions = {
               {
                 key: 'stock_code',
                 label: 'Stok Kodu',
-                sortable: false,
+                sortable: true,
                 
               },
               {
                 key: 'stock_name',
                 label: 'Stok Adı',
-                sortable: false,
+                sortable: true,
                
               },
               {
                 key: 'measure',
                 label: 'Ölçü',
-                sortable: false,
+                sortable: true,
                 
               },
               {
                 key: 'list_price',
                 label: 'Liste Fiyatı',
-                sortable: false,
+                sortable: true,
                 
               },
               {
                 key: 'offer_price',
                 label: 'Kampanya',
-                sortable: false,
+                sortable: true,
                 
               },
               {
                 key: 'net_price_with_kdv',
                 label: 'Net Fiyat',
-                sortable: false,
+                sortable: true,
                 
               },
               {
                 key: 'net_price_without_kdv',
                 label: 'Net Fiyat',
-                sortable: false,
+                sortable: true,
                 
               },
               {
                 key: 'cart_operations',
                 label: 'Sepet İşlemleri',
                 sortable: false,
-              }
+              },
+              {
+                key: 'other_operations',
+                label: 'Diğer İşlemler',
+                sortable: false,
+              },
+
             ]);  
             context.commit("setListDataLoading",false)
         },4000)
