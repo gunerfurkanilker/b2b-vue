@@ -643,12 +643,12 @@
             {{ $t("navbar.dropdown.henry.list.lockscreen") }}
           </b-dropdown-item>
           <b-dropdown-divider></b-dropdown-divider>
-          <a href="/logout" class="dropdown-item text-danger">
+          <b-dropdown-item @click="logout" class="text-danger">
             <i
               class="bx bx-power-off font-size-16 align-middle me-1 text-danger"
             ></i>
             {{ $t("navbar.dropdown.henry.list.logout") }}
-          </a>
+          </b-dropdown-item>
         </b-dropdown>
         <div class="dropdown d-inline-block">
           <button
@@ -738,6 +738,9 @@ export default {
     ...mapActions("cart", [
       "changeQuantityOfProduct",
       "removeProductFromCartList",
+    ]),
+    ...mapActions("auth", [
+      "logout"
     ]),
     toggleRightSidebar() {
       this.$parent.toggleRightSidebar();

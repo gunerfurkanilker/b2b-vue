@@ -77,7 +77,7 @@ export default {
       <!-- Start right Content here -->
       <!-- ============================================================== -->
       <div class="main-content">
-        <div class="page-content">
+        <div class="page-content animate-layout">
           <div class="container-fluid">
             <slot />
           </div>
@@ -92,3 +92,16 @@ export default {
     <RightBar />
   </div>
 </template>
+
+<style scoped>
+.animate-layout{
+    animation-name: example;
+  animation-duration: .8s;
+  animation-timing-function: ease-in;
+}
+@keyframes example {
+  from {opacity: .1;}
+  to {opacity: 1;}
+}
+
+</style>

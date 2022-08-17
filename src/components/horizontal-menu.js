@@ -106,13 +106,13 @@ export const menuItems = [
             {
                 id: 18,
                 label: 'Kullanıcı Yönetimi',
-                link: '/pages/coming-soon',
+                link: '/management/user-management',
                 parentId: 17
             },
             {
                 id: 19,
                 label: 'Kullanıcı Başvuruları',
-                link: '/pages/coming-soon',
+                link: '/management/user-applicants',
                 parentId: 17
             },
             {

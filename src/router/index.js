@@ -2,8 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueMeta from 'vue-meta'
 
-//import store from '@/state/store'
+import store from '@/state/store'
+
 import routes from './routes'
+
+
 
 Vue.use(VueRouter)
 Vue.use(VueMeta, {
@@ -31,7 +34,12 @@ const router = new VueRouter({
 
 // Before each route evaluates...
 router.beforeEach((routeTo, routeFrom, next) => {
-  next();
+  console.log(routeTo)
+  if(!store.getters['auth/getUser'] && routeTo.name != "login")
+    next("login")
+  else
+    next()  
+  
 })
 
 router.beforeResolve(async (routeTo, routeFrom, next) => {

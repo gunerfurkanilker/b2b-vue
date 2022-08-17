@@ -1,5 +1,21 @@
 <template>
   <Layout>
+    <h1 class="text-danger">15.08.2022</h1>
+    <dl class="text-danger">
+      <dt>Login Sayfası</dt>
+      <dd>Login Sayfasına form validasyonu eklendi. (Genel olarak tüm uygulamadaki formlara eklenecektir)</dd>
+      <dd>Şifremi unuttum kısmına validasyon eklendi</dd>
+      <dt>Kullanıcı Yönetimi</dt>
+      <dd>Kullanıcı Listeleme sayfası hazırlandı</dd>
+      <dd>Kullanıcı düzenleme formlarına validasyonlar eklendi. (Kullanıcı ekleme kısmına da eklenecektir)</dd>
+    </dl>
+    <h1>12.08.2022</h1>
+    <dl>
+      <dt>Login Sayfası</dt>
+      <dd>Login Sayfa Tasarımı</dd>
+      <dd>Kullanıcı login değil ise login sayfasına yönlendirme (Henüz servislere bağlanmadı)</dd>
+      <dd>Logout yapıldıktan sonra login haricinde (ileride 404 ve 500 sayfaları da eklenecek) herhangi bir yere istek atıldığında login sayfasına yönlendirme</dd>
+    </dl>
     <h1>10.08.2022</h1>
     <dl>
       <dt>Sipariş Listesi</dt>

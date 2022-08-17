@@ -2,6 +2,11 @@
 
 export default [
   {
+    path: "/login",
+    name: "login",
+    component: () => import("../pages/views/login/Login.vue"),
+  },
+  {
     path: "/",
     name: "default",
     meta: {
@@ -48,6 +53,16 @@ export default [
     path: "/order-detail",
     name: "orderDetail",
     component: () => import("../pages/views/order/OrderDetail.vue"),
+  },
+  {
+    path: "/management/user-management",
+    name: "userManagement",
+    component: () => import("../pages/views/management/UserManagement.vue"),
+  },
+  {
+    path: "/management/user-applicants",
+    name: "userApplicants",
+    component: () => import("../pages/views/management/UserApplicants.vue"),
   },
   {
     path: "/404",

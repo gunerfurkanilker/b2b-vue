@@ -29,6 +29,10 @@ import tinymce from 'vue-tinymce-editor'
 
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+import { ValidationProvider } from 'vee-validate';
+
+
+
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_APIKEY,
   authDomain: process.env.VUE_APP_AUTHDOMAIN,
@@ -68,6 +72,7 @@ Vue.use(VueGoogleMaps, {
   installComponents: true
 })
 Vue.component('apexchart', VueApexCharts)
+Vue.component('ValidationProvider', ValidationProvider);
 Vue.use(VueViewer)
 
 new Vue({
