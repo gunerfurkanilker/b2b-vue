@@ -65,6 +65,21 @@ export default [
     component: () => import("../pages/views/management/UserApplicants.vue"),
   },
   {
+    path: "/management/settings",
+    name: "settings",
+    component: () => import("../pages/views/management/Settings.vue"),
+  },
+  {
+    path: "/management/announcement",
+    name: "announcements",
+    component: () => import("../pages/views/management/Announcements.vue"),
+  },
+  {
+    path: "/management/payment-settings",
+    name: "paymentSettings",
+    component: () => import("../pages/views/management/PaymentSettings.vue"),
+  },
+  {
     path: "/404",
     name: "404",
     component: require("./views/utility/404").default,

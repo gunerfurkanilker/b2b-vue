@@ -118,19 +118,19 @@ export const menuItems = [
             {
                 id: 19,
                 label: 'Ayarlar',
-                link: '/pages/coming-soon',
+                link: '/management/settings',
                 parentId: 17
             },
             {
                 id: 20,
                 label: 'Duyurular',
-                link: '/pages/coming-soon',
+                link: '/management/announcement',
                 parentId: 17
             },
             {
                 id: 21,
                 label: 'Pos Yönetimi',
-                link: '/pages/coming-soon',
+                link: '/management/payment-settings',
                 parentId: 17
             },
             {

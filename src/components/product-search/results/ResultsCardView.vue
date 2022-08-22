@@ -1,14 +1,13 @@
 <template>
   <div class="row">
     <div v-for="data in listDatas" :key="data.id" class="col-xl-4 col-sm-6">
-      <div class="card">
+      <div class="card border shadow">
         <div class="card-title pt-2 text-end">
           <div class="d-flex justify-content-end">
             <div
             class="d-flex"
               v-if="cartList.filter((e) => e.stock_code === data.stock_code).length > 0"
             >
-              <label for="" class="me-2 my-auto d-inline">Miktar</label>
               <input
                 type="number"
                 :value="
@@ -16,7 +15,7 @@
                 "
                 :min="1"
                 class="form-control"
-                style="width: 60px"
+                style="width: 100%"
                 @change="
                   (e) =>
                     changeQuantityOfProduct({
@@ -26,7 +25,7 @@
                 "
               />
               <v-tooltip
-                bottom
+                top
                 
               >
                 <template v-slot:activator="{ on, attrs }">
@@ -34,10 +33,12 @@
                     v-bind="attrs"
                     v-on="on"
                     icon
+                    small
                     color="danger"
+                    class="my-auto"
                     @click="removeProductFromCartList(data)"
                   >
-                    <v-icon>mdi-close</v-icon>
+                    <v-icon >mdi-close</v-icon>
                   </v-btn>
                 </template>
                 <span>Sepetten Çıkar</span>

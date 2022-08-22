@@ -2,14 +2,14 @@
   <div class="card">
     <div class="card-body">
       <b-table
-        :items="userApplicantList"
-        :fields="userApplicantListHeaders"
+        :items="announcementList"
+        :fields="announcementListHeaders"
         hover
         responsive
         sort-icon-left
         :per-page="perPage"
         :current-page="currentPage"
-        :busy="userApplicantListLoading"
+        :busy="announcementListLoading"
       >
         <template #table-busy>
           <div class="text-center">
@@ -20,9 +20,6 @@
             ></b-spinner>
           </div>
         </template>
-        <template #cell(status)="data">
-          <v-chip small :color="data.item.status ? 'success lighten-1' : 'secondary'" label> {{ data.item.status ? 'Onaylandı' : 'Onay Bekliyor' }} </v-chip>
-        </template>
         <template #cell(process)="data">
           <div class="text-center" v-if="!data.item.status">
             <v-tooltip top>
@@ -31,26 +28,31 @@
                   v-bind="attrs"
                   v-on="on"
                   icon
-                  color="success darken-2"
-                  @click="openUserEditDialog(data.item, 'edit')"
+                  color="amber darken-2"
+                  @click="openAnnouncementDialog(data.item)"
                 >
-                  <v-icon>mdi-check</v-icon>
+                  <v-icon>mdi-pencil</v-icon>
                 </v-btn>
               </template>
-              <span>Onayla</span>
+              <span>Düzenle</span>
             </v-tooltip>
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" @click="openChangePasswordDialog(data.item)">
-                  <v-icon>mdi-close</v-icon>
+                <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" >
+                  <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </template>
-              <span>Reddet</span>
+              <span>Sil</span>
             </v-tooltip>
           </div>
         </template>
       </b-table>
-      
+      <EditAnnouncementDialog
+        :announcementProp="announcement"
+        :processType="'edit'"
+        :showDialog="editAnnouncementDialog"
+        @dialogChange="(data) => (editAnnouncementDialog = data)"
+      ></EditAnnouncementDialog>
       
     </div>
   </div>
@@ -58,6 +60,8 @@
 
 <script>
 import { mapState } from "vuex";
+
+import EditAnnouncementDialog from '@/components/management/announcement/dialogs/EditAnnouncementDialog.vue'
 
 
 
@@ -72,11 +76,11 @@ export default {
   },
 
   components: {
-    
+    EditAnnouncementDialog
   },
 
   computed: {
-    ...mapState("user", ["userApplicantList", "userApplicantListHeaders", "userApplicantListLoading"])
+    ...mapState("announcement", ["announcementList", "announcementListHeaders", "announcementListLoading"])
   },
   mounted() {
     
@@ -85,12 +89,15 @@ export default {
     return {
       selectRow: false,
       userData: null,
-      showUserEditDialog: false,
-      showChangePasswordDialog: false
+      editAnnouncementDialog:false,
+      announcement:null
     };
   },
   methods: {
-
+    openAnnouncementDialog(data){
+      this.announcement = data;
+      this.editAnnouncementDialog = true;
+    }
   },
   watch: {},
 };

@@ -2,9 +2,6 @@
 <div class="card">
   <div class="card-body">
     <div class="row mb-3">
-      <div class="col-lg-12 text-end">
-        <v-btn color="success darken-2" text small @click="showNewUserDialog = !showNewUserDialog"><v-icon small left>mdi-account-plus</v-icon> Kullanıcı Ekle</v-btn>
-      </div>
       <div class="col-lg-12 d-flex flex-wrap">
         <div>
           <p class="text-center">Gösterilen Kayıt Sayısı</p>
@@ -43,7 +40,7 @@
           v-model="currentPage"
           circle
           class="my-4"
-          :length="this.userList.length % this.perPage == 0 && this.userList.length > this.perPage ? this.userList.length / this.perPage : parseInt(this.userList.length / this.perPage) + 1"
+          :length="this.userApplicantList.length % this.perPage == 0 && this.userApplicantList.length > this.perPage ? this.userApplicantList.length / this.perPage : parseInt(this.userApplicantList.length / this.perPage) + 1"
           :total-visible="5"
         ></v-pagination>
       </div>
@@ -69,10 +66,10 @@ export default {
     EditUserDialog
   },
   created() {
-    this.fetchUserList();
+    this.fetchUserApplicantList();
   },
   computed: {
-    ...mapState("user",["userList"])
+    ...mapState("user",["userApplicantList"])
   },
   data() {
     return {
@@ -82,7 +79,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("user",["fetchUserList"]),
+    ...mapActions("user",["fetchUserApplicantList"]),
     clickLabel(item) {
       console.log("Click", item);
     },

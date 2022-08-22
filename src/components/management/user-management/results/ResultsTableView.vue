@@ -3,7 +3,7 @@
     <div class="card-body">
       <b-table
         :items="userList"
-        :fields="listHeaders"
+        :fields="userListHeaders"
         hover
         responsive
         sort-icon-left
@@ -96,7 +96,7 @@ export default {
   },
 
   computed: {
-    ...mapState("user", ["userList", "listHeaders", "userListLoading"])
+    ...mapState("user", ["userList", "userListHeaders", "userListLoading"])
   },
   mounted() {
     

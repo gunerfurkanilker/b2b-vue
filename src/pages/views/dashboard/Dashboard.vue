@@ -1,7 +1,9 @@
 <template>
   <Layout>
-    <h1 class="text-danger">15.08.2022</h1>
-    <dl class="text-danger">
+    DASHBOARD
+    <!--<h1 class="text-danger">15.08.2022</h1>
+    
+      <dl class="text-danger">
       <dt>Login Sayfası</dt>
       <dd>Login Sayfasına form validasyonu eklendi. (Genel olarak tüm uygulamadaki formlara eklenecektir)</dd>
       <dd>Şifremi unuttum kısmına validasyon eklendi</dd>
@@ -35,6 +37,8 @@
       <dd>Sepet sayfasında siparişi tamamla butonuna basıldıktan sonra açılan sayfadır</dd>
       <dd>Kullanıcıdan bu sayfada teslimat ve ödeme bilgileri girilmesi istenir</dd>
     </dl>
+    -->
+    
   </Layout>
 </template>
 
