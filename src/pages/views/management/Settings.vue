@@ -17,18 +17,18 @@
         danışınız. Bilgi kutucuklarının üzerine mouse ile geldiğinizde, size
         ilgili alanla ilgili bilgiyi gösterecektir.
       </v-alert>
-          <v-tabs grow>
+          <v-tabs icons-and-text mobile-breakpoint="lg" grow>
             <v-tab>
-              <v-icon left> mdi-database </v-icon>
               ERP Ayarları
+              <v-icon> mdi-database </v-icon>
             </v-tab>
             <v-tab>
-              <v-icon left> mdi-wrench </v-icon>
               Genel Ayarlar
+              <v-icon> mdi-wrench </v-icon>
             </v-tab>
             <v-tab>
-              <v-icon left> mdi-email </v-icon>
               Mail Ayarları
+              <v-icon> mdi-email </v-icon>
             </v-tab>
 
             <v-tab-item>

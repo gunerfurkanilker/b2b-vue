@@ -4,18 +4,18 @@
     <v-app>
       <div class="row">
         <div class="col-lg-12 pb-5 mb-5">
-          <v-tabs grow>
-            <v-tab>
-              <v-icon left> mdi-database </v-icon>
-              Banka Hesapları
+          <v-tabs icons-and-text mobile-breakpoint="lg" grow>
+            <v-tab @click="breadcrumbArray[2].text = 'Banka Hesapları'">
+            Banka Hesapları
+            <v-icon> mdi-bank </v-icon> 
             </v-tab>
-            <v-tab>
-              <v-icon left> mdi-wrench </v-icon>
+            <v-tab @click="breadcrumbArray[2].text = 'Banka Taksit Oranları'">
               Banka Taksit Oranları
+              <v-icon> mdi-numeric </v-icon>
             </v-tab>
-            <v-tab>
-              <v-icon left> mdi-email </v-icon>
+            <v-tab @click="breadcrumbArray[2].text = 'Banka Parametreleri'">
               Banka Parametreleri
+              <v-icon left> mdi-lastpass </v-icon>
             </v-tab>
 
             <v-tab-item class="pt-5">
@@ -43,8 +43,8 @@ import BankParamters from "@/components/management/payment-settings/BankParamete
 
 export default {
   page: {
-    title: "Ayarlar",
-    meta: [{ name: "description", content: "Ayarlar" }],
+    title: "Pos Yönetimi",
+    meta: [{ name: "description", content: "Pos Yönetimi" }],
   },
   components: {
     Layout,
@@ -61,7 +61,11 @@ export default {
           active: false,
         },
         {
-          text: "Ayarlar",
+          text: "Pos Yönetimi",
+          active: false,
+        },
+        {
+          text: "Banka Hesapları",
           active: true,
         },
       ],

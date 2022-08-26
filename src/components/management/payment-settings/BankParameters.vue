@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-6">
-        <span><v-icon small left>mdi-wallet</v-icon>Banka hesap parametrelerinizi buradan yönetebilirsiniz</span>
+        <span><v-icon small left>mdi-information-outline</v-icon>Banka hesap parametrelerinizi buradan yönetebilirsiniz</span>
       </div>
       <div class="col-lg-6 text-end">
         <v-btn color="success darken-2" text small @click="openBankParametersDialog('new')"><v-icon small left>mdi-plus</v-icon> YENİ PARAMETRE EKLE</v-btn>

@@ -3,7 +3,8 @@ import Swal from "sweetalert2";
 import Vue from "vue";
 
 export const state = {
-    cartList: []
+    cartList: [],
+    cartCategoryList: []
 };
 
 export const mutations = {
@@ -14,7 +15,7 @@ export const mutations = {
     changeQuantityOfProduct(state, data) {
         let productItemInCart = state.cartList.find(e => e.stock_code == data.product.stock_code)
         if (productItemInCart) {
-            if(data.definiteVal)
+            if (data.definiteVal)
                 productItemInCart.quantity = data.definiteVal;
             else
                 productItemInCart.quantity += data.number;
@@ -30,10 +31,15 @@ export const mutations = {
                 state.cartList.splice(indexProductItemInCart, 1);
             }
         }
-
-
-
-
+    },
+    setCartCategoryList(state, data) {
+        state.cartCategoryList = data;
+    },
+    setCartCategoryListHeaders(state, data) {
+        state.cartCategoryListHeaders = data;
+    },
+    setCartCategoryListLoading(state, data) {
+        state.cartCategoryListLoading = data;
     }
 };
 
@@ -84,7 +90,47 @@ export const actions = {
 
     },
     changeQuantityOfProduct(context, product, number = 1, definiteVal = false) {
-        context.commit("changeQuantityOfProduct", product, number ,definiteVal);
+        context.commit("changeQuantityOfProduct", product, number, definiteVal);
+    },
+    fetchCartCategoryList(context) {
+        context.commit("setCartCategoryListLoading", true)
+        setTimeout(function () {
+            context.commit('setCartCategoryList', [
+                {
+                    id: 1,
+                    title: "Kategori 1",
+                    status: true
+                },
+                {
+                    id: 2,
+                    title: "Kategori 2",
+                    status: false
+                },
+            ]);
+            context.commit('setCartCategoryListHeaders', [
+                {
+                    key: 'title',
+                    label: 'Başlık',
+                    sortable: false,
+
+                },
+                {
+                    key: 'status',
+                    label: 'Durum',
+                    sortable: true,
+                    class: "text-center"
+
+                },
+                {
+                    key: 'process',
+                    label: 'İşlem',
+                    sortable: false,
+                    class: "text-center"
+
+                }
+            ]);
+            context.commit("setCartCategoryListLoading", false)
+        }, 2000)
     }
 
 };

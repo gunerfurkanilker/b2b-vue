@@ -80,6 +80,26 @@ export default [
     component: () => import("../pages/views/management/PaymentSettings.vue"),
   },
   {
+    path: "/management/slider-management",
+    name: "sliderSettings",
+    component: () => import("../pages/views/management/SliderManagement.vue"),
+  },
+  {
+    path: "/management/payment-types",
+    name: "paymentTypes",
+    component: () => import("../pages/views/management/PaymentTypes.vue"),
+  },
+  {
+    path: "/management/cart-categories",
+    name: "cartCategories",
+    component: () => import("../pages/views/management/CartCategories.vue"),
+  },
+  {
+    path: "/management/stock-categories",
+    name: "stockCategories",
+    component: () => import("../pages/views/management/StockCategories.vue"),
+  },
+  {
     path: "/404",
     name: "404",
     component: require("./views/utility/404").default,

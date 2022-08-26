@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-6">
-        <span><v-icon small left>mdi-wallet</v-icon>Banka taksit oranlarınızı buradan yönetebilirsiniz</span>
+        <span><v-icon small left>mdi-information-outline</v-icon>Banka taksit oranlarınızı buradan yönetebilirsiniz</span>
       </div>
       <div class="col-lg-6 text-end">
         <v-btn color="success darken-2" text small @click="openBankInstallmentDialog('new')"><v-icon small left>mdi-plus</v-icon> YENİ TAKSİT EKLE</v-btn>

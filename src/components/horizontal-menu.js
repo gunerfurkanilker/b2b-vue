@@ -136,25 +136,25 @@ export const menuItems = [
             {
                 id: 22,
                 label: 'Slider Yönetimi',
-                link: '/pages/coming-soon',
+                link: '/management/slider-management',
                 parentId: 17
             },
             {
                 id: 23,
                 label: 'Ödeme Tipleri',
-                link: '/pages/coming-soon',
+                link: '/management/payment-types',
                 parentId: 17
             },
             {
                 id: 24,
                 label: 'Sepet Kategorileri',
-                link: '/pages/coming-soon',
+                link: '/management/cart-categories',
                 parentId: 17
             },
             {
                 id: 25,
                 label: 'Stok Kategorileri',
-                link: '/pages/coming-soon',
+                link: '/management/stock-categories',
                 parentId: 17
             },
             {

@@ -7,7 +7,7 @@
   >
     <v-card>
       <v-card-title>
-        {{ processType == "new" ? "Duyuru Ekle" : "Duyuru Düzenle" }}
+        {{ processType == "new" ? "Slider Ekle" : "Slider Düzenle" }}
         <v-spacer></v-spacer>
         <v-btn @click="closeDialog()" color="danger darken-2" icon>
           <v-icon>mdi-close</v-icon>
@@ -16,28 +16,38 @@
       <v-card-text>
         <div class="container">
           <div class="row">
+            <div class="col-lg-12 text-center">
+              <img :src="slider.image" alt="" style="width:300px;height:auto" @click="expandImage(slider.image)">
+            </div>
+            <div class="col-md-12 text-center">
+            <label for="">Resim</label>
+            <v-file-input
+              accept="image/*"
+              placeholder="Dosya Seçin"
+            ></v-file-input>
+          </div>
             <div class="col-lg-12">
               <v-text-field
-                v-model="announcement.subject"
-                label="Konu"
+                v-model="slider.title"
+                label="Başlık"
                 :error-messages="
-                  validationMessages($v.announcement.subject, 'Konu')
+                  validationMessages($v.slider.title, 'Başlık')
                 "
                 prepend-inner-icon="mdi-page-layout-header"
-                @input="$v.announcement.subject.$touch()"
-                @blur="$v.announcement.subject.$touch()"
+                @input="$v.slider.title.$touch()"
+                @blur="$v.slider.title.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-12">
               <v-textarea
-                v-model="announcement.content"
+                v-model="slider.content"
                 label="İçerik"
                 :error-messages="
-                  validationMessages($v.announcement.content, 'İçerik')
+                  validationMessages($v.slider.content, 'İçerik')
                 "
                 prepend-inner-icon="mdi-format-indent-increase"
-                @input="$v.announcement.content.$touch()"
-                @blur="$v.announcement.content.$touch()"
+                @input="$v.slider.content.$touch()"
+                @blur="$v.slider.content.$touch()"
               ></v-textarea>
             </div>
             <div class="col-lg-6">
@@ -50,53 +60,33 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
-                    :value="announcement.start_date"
+                    :value="slider.start_date"
                     label="Başlangıç Tarihi"
                     :error-messages="
-                      validationMessages($v.announcement.content, 'Başlangıç Tarihi')
+                      validationMessages($v.slider.content, 'Başlangıç Tarihi')
                     "
                     prepend-inner-icon="mdi-calendar"
-                    @input="$v.announcement.start_date.$touch()"
-                    @blur="$v.announcement.start_date.$touch()"
+                    @input="$v.slider.start_date.$touch()"
+                    @blur="$v.slider.start_date.$touch()"
                     readonly
                     v-bind="attrs"
                     v-on="on"
                   ></v-text-field>
                 </template>
                 <v-date-picker
-                  v-model="announcement.start_date"
+                  v-model="slider.start_date"
                   locale="tr"
                 ></v-date-picker>
               </v-menu>
             </div>
             <div class="col-lg-6">
-              <v-menu
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
+              <label for="">Aktiflik Durumu</label>
+              <v-switch
+                v-model="slider.status"
+                :label="slider.status ? 'Aktif' : 'Pasif'"
               >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    :value="announcement.end_date"
-                    label="Bitiş Tarihi"
-                    :error-messages="
-                      validationMessages($v.announcement.content, 'Bitiş Tarihi')
-                    "
-                    prepend-inner-icon="mdi-calendar"
-                    @input="$v.announcement.end_date.$touch()"
-                    @blur="$v.announcement.end_date.$touch()"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="announcement.end_date"
-                  locale="tr"
-                ></v-date-picker>
-              </v-menu>
+
+              </v-switch>
             </div>
           </div>
         </div>
@@ -116,15 +106,15 @@ import { validationMixin } from "vuelidate";
 import { validationMessages } from "@/validationMessages.js";
 //import simplebar from "simplebar-vue";
 
-
 export default {
   mixins: [validationMixin],
 
   validations() {
     //const self = this;
     return {
-      announcement: {
-        subject: { required },
+      slider: {
+        image: { required },
+        title: { required },
         content: { required },
         start_date: { required },
       },
@@ -140,14 +130,16 @@ export default {
       type: Boolean,
       default: false,
     },
-    announcementProp: {
+    sliderProp: {
       type: Object,
       default: () => ({
         id: null,
-        subject: "",
+        image: null,
+        title: "",
         content: "",
-        start_date: null,
-        end_date: null,
+        order: "",
+        start_date: "",
+        status: true
       }),
     },
     processType: {
@@ -161,16 +153,17 @@ export default {
       dialog: false,
       showPassword: false,
       roleGroupList: ["Yönetici", "Plasiyer", "Müşteri"],
-      announcement: {
-        subject: "",
+      slider: {
+        image: null,
+        title: "",
         content: "",
-        start_date: null,
-        end_date: null,
+        order: "",
+        start_date: "",
+        status: true
       },
     };
   },
   methods: {
-  
     validationMessages,
     closeDialog() {
       this.dialog = false;
@@ -178,8 +171,11 @@ export default {
     },
     saveForm() {
       this.$v.$touch();
-      console.log(this.$v);
-    
+    },
+    expandImage(images) {
+      this.$viewerApi({
+        images: [images],
+      });
     },
   },
   watch: {
@@ -189,8 +185,8 @@ export default {
     showDialog: function (newVal) {
       this.dialog = newVal;
     },
-    announcementProp: function (newVal) {
-      this.announcement = newVal;
+    sliderProp: function (newVal) {
+      this.slider = newVal;
     },
   },
 };
