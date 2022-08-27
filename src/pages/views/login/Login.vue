@@ -80,7 +80,7 @@
                       elevation="3"
                       small
                       raised
-                      @click="tryToLogIn()"
+                      @click="testLogin()"
                       >GİRİŞ YAP</v-btn
                     >
                   </div>
@@ -114,6 +114,8 @@ import { validationMessages } from "@/validationMessages.js"
 
 import { mapActions } from "vuex";
 
+const axios = require('axios').default;
+
 export default {
   components: {
     ForgotPasswordDialog,
@@ -140,15 +142,29 @@ export default {
   },
   methods: {
     validationMessages,
+    testLogin(){
+      axios.post("https://ofiscom.net/api/redirect",{
+        method:"POST",
+        url:"http://195.244.39.214:1903/api/auth/login",
+        post: {
+          Value: "emre",
+          Password: "1"
+        }
+      },{
+        headers:{
+
+        }
+      }).then(response => console.log(response))
+    },
     tryToLogIn(){
       this.$v.$touch();
 
       if(!this.$v.$invalid)
-        this.login({username:this.username, password: this.password});
+        this.tryLogin({username:this.username, password: this.password});
 
 
     },
-    ...mapActions("auth", ["login"]),
+    ...mapActions("auth", ["tryLogin"]),
   },
 };
 </script>

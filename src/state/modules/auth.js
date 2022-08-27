@@ -1,4 +1,5 @@
 import router from "../../router";
+import { login } from "../../services/modules/login.js"
 
 export const state = {
     user: null,
@@ -21,9 +22,11 @@ export const getters = {
 
 export const actions = {
    
-    login( {commit} ,{username, password} ) {
+    async tryLogin( {commit} ,{username, password} ) {
+        let response = await login(username,password);
+        console.log("LOGIN_RESPONSE", response);
         commit("setUser",{username, password})
-        router.push("/")
+        //router.push("/")
     },
 
     logout({ commit }) {
