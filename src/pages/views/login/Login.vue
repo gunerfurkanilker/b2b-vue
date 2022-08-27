@@ -143,17 +143,16 @@ export default {
   methods: {
     validationMessages,
     testLogin(){
-      axios.post("https://ofiscom.net/api/redirect",{
+      axios.post("http://localhost:8080/api/redirect",{
         method:"POST",
-        url:"http://195.244.39.214:1903/api/auth/login",
+        url:"http://195.244.39.215:1903/api/v1/auth/login",
         post: {
           Value: "emre",
           Password: "1"
         }
       },{
         headers:{
-
-        }
+        },
       }).then(response => console.log(response))
     },
     tryToLogIn(){

@@ -3,3 +3,4 @@
 vuetify.css
 .htaccess
 /.idea/
+/package-lock.json
