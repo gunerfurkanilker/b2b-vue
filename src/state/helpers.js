@@ -1,5 +1,12 @@
 import { mapState, mapGetters, mapActions } from 'vuex'
 
+
+export const token = {
+  ...mapState['auth',{
+    api_token : (state) => state.token 
+  }]
+}
+
 export const authComputed = {
   ...mapState('auth', {
     currentUser: (state) => state.currentUser,

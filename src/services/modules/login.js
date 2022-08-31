@@ -1,27 +1,17 @@
-import axios from "axios";
-//import { initAxiosInstance } from "../index.js";
-//import { REQUEST_URL } from "../url.js";
-import { BRIDGE_URL } from "../url.js"
+import { prepareRequest } from "../index.js";
+import { setParamsToURL } from "../index.js";
+import { USER_API_URL_LIST }from "../routes/user/index.js";
 
 async function login(username,password){
-    //let axiosInstance = initAxiosInstance();
-    
-        let response = await axios.post(BRIDGE_URL,{
-            "method":"POST",
-            "post":{
-                "Value": username,
-                "Password": password
-            }
-        },
-          {
-            headers:{
-
-            }
-          } 
-        )
-        return response;
-   
-    
+    let response = await prepareRequest(null,{
+      method: "POST",
+      url: setParamsToURL(USER_API_URL_LIST.LOGIN_URL),
+      post: {
+        Value: username,
+        Password: password
+      }
+    });
+    return response;
 }
 
 export { login };

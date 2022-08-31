@@ -1,4 +1,5 @@
-const REQUEST_URL="http://195.244.39.214:1903/api";
-const BRIDGE_URL="http://ofiscom.net/api/redirect";
+const API_BASE_URL="http://195.244.39.214:1903/api";
+const BRIDGE_URL="http://localhost:8080/api/redirect";
+//const BRIDGE_URL="http://ofiscom.net/api/redirect"; // canlıya alınırken böyle olacak
 
-export {REQUEST_URL,BRIDGE_URL};
+export {API_BASE_URL,BRIDGE_URL};

@@ -2,12 +2,11 @@
   <div class="card">
     <div class="card-body">
       <b-table
-        :items="userList"
+        :items="userList.data"
         :fields="userListHeaders"
         hover
         responsive
         sort-icon-left
-        :per-page="perPage"
         :current-page="currentPage"
         :busy="userListLoading"
       >
@@ -20,8 +19,14 @@
             ></b-spinner>
           </div>
         </template>
-        <template #cell(status)="data">
-          <v-chip small :color="data.item.status ? 'success lighten-1' : 'secondary'" label> {{ data.item.status ? 'Aktif' : 'Pasif' }} </v-chip>
+        <template #cell(full_name)="data">
+          {{ data.item.firstName.concat(" ",data.item.lastName) }}
+        </template>
+        <template #cell(isActive)="data">
+          <v-chip small :color="data.item.isActive ? 'success lighten-1' : 'secondary'" label> {{ data.item.isActive ? 'Aktif' : 'Pasif' }} </v-chip>
+        </template>
+        <template #cell(lastLoginDate)="data">
+          {{ data.item.lastLoginDate ? moment(data.item.lastLoginDate).locale("tr").format("DD MM YYYY hh:mm:ss") : '' }}
         </template>
         <template #cell(process)="data">
           <div class="text-center">
@@ -76,6 +81,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import moment from "moment";
 
 import EditUserDialog from "../dialogs/EditUserDialog.vue";
 import ChangePasswordDialog from "../dialogs/ChangePasswordDialog.vue";
@@ -119,7 +125,13 @@ export default {
       this.userData = Object.assign({}, user);
       this.showChangePasswordDialog = !this.showChangePasswordDialog;
     },
+    moment(date){
+      return moment(date);
+    }
   },
-  watch: {},
+  watch: {
+
+
+  },
 };
 </script>

@@ -616,7 +616,7 @@
               alt="Header Avatar"
             />
             <span class="d-none d-xl-inline-block ms-1">{{
-              "İlker Furkan Güner"
+              user ? user.FullName : ""
             }}</span>
             <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
           </template>
@@ -689,6 +689,7 @@ export default {
   computed: {
     ...layoutComputed,
     ...mapState("current", ["current"]),
+    ...mapState("auth", ["user","token"]),
     ...mapState("cart", ["cartList"]),
   },
   components: {

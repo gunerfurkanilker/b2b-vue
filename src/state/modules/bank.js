@@ -1,5 +1,6 @@
 //import Swal from "sweetalert2";
 //import Vue from "vue";
+import { getSafeDepositsList } from "../../services/modules/bank/bankService";
 
 export const state = {
     bankList: [],
@@ -48,6 +49,13 @@ export const state = {
   };
   
   export const actions = {
+
+    async fetchSafeDepositsList(context, { params,body }){
+      context;
+      let result = await getSafeDepositsList(params,body);
+      return result.data.data;
+    },
+
     fetchBankList(context) {
       context.commit("setBankListLoading", true)
       setTimeout(function () {

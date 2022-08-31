@@ -1,9 +1,13 @@
 <template>
- <v-dialog v-model="dialog" max-width="900" persistent style="overflow:hidden !important">
-  
-    <v-card >
+  <v-dialog
+    v-model="dialog"
+    max-width="900"
+    persistent
+    style="overflow: hidden !important"
+  >
+    <v-card>
       <v-card-title>
-        {{ processType == 'new' ? 'Kullanıcı Ekle' : 'Kullanıcı Düzenle' }}
+        {{ processType == "new" ? "Kullanıcı Ekle" : "Kullanıcı Düzenle" }}
         <v-spacer></v-spacer>
         <v-btn @click="closeDialog()" color="danger darken-2" icon>
           <v-icon>mdi-close</v-icon>
@@ -14,101 +18,161 @@
           <div class="row">
             <div class="col-lg-6">
               <v-text-field
-                v-model="user.name"
+                v-model="editUser.firstName"
                 label="Ad"
-                :error-messages="validationMessages($v.user.name,'Ad')"
+                :error-messages="
+                  validationMessages($v.editUser.firstName, 'Ad')
+                "
                 prepend-inner-icon="mdi-account"
-                @input="$v.user.name.$touch()"
-                @blur="$v.user.name.$touch()"
+                @input="$v.editUser.firstName.$touch()"
+                @blur="$v.editUser.firstName.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="user.surname"
+                v-model="editUser.lastName"
                 label="Soyad"
-                :error-messages="validationMessages($v.user.surname,'Soyad')"
+                :error-messages="
+                  validationMessages($v.editUser.lastName, 'Soyad')
+                "
                 prepend-inner-icon="mdi-account"
-                @input="$v.user.surname.$touch()"
-                @blur="$v.user.surname.$touch()"
+                @input="$v.editUser.lastName.$touch()"
+                @blur="$v.editUser.lastName.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="user.email"
+                v-model="editUser.email"
                 label="E-Posta"
-                :error-messages="validationMessages($v.user.email,'E-Posta')"
+                :error-messages="
+                  validationMessages($v.editUser.email, 'E-Posta')
+                "
                 prepend-inner-icon="mdi-email"
-                @input="$v.user.email.$touch()"
-                @blur="$v.user.email.$touch()"
+                @input="$v.editUser.email.$touch()"
+                @blur="$v.editUser.email.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="user.username"
+                v-model="editUser.userName"
                 label="Kullanıcı Adı"
-                :error-messages="validationMessages($v.user.username,'Kullanıcı Adı')"
+                :error-messages="
+                  validationMessages($v.editUser.userName, 'Kullanıcı Adı')
+                "
                 prepend-inner-icon="mdi-account-arrow-right"
-                @input="$v.user.email.$touch()"
-                @blur="$v.user.email.$touch()"
+                @input="$v.editUser.userName.$touch()"
+                @blur="$v.editUser.userName.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6" v-if="processType == 'new'">
               <v-text-field
-                v-model="user.password"
+                v-model="editUser.password"
                 label="Şifre"
-                :error-messages="validationMessages($v.user.password,'Şifre')"
+                :error-messages="
+                  validationMessages($v.editUser.password, 'Şifre')
+                "
                 prepend-inner-icon="mdi-key"
                 @click:append="showPassword = !showPassword"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPassword ? 'text' : 'password'"
-                @input="$v.user.password.$touch()"
-                @blur="$v.user.password.$touch()"
+                @input="$v.editUser.password.$touch()"
+                @blur="$v.editUser.password.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="user.tckn"
+                v-model="editUser.trin"
                 label="T.C Kimlik No"
-                :error-messages="validationMessages($v.user.tckn,'T.C Kimlik No')"
+                :error-messages="
+                  validationMessages($v.editUser.trin, 'T.C Kimlik No')
+                "
                 prepend-inner-icon="mdi-card-account-details"
-                @input="$v.user.tckn.$touch()"
-                @blur="$v.user.tckn.$touch()"
+                @input="$v.editUser.trin.$touch()"
+                @blur="$v.editUser.trin.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="user.phone"
+                v-model="editUser.phoneNumber"
                 label="Telefon"
-                :error-messages="validationMessages($v.user.phone,'Telefon')"
+                :error-messages="
+                  validationMessages($v.editUser.phoneNumber, 'Telefon')
+                "
                 prepend-inner-icon="mdi-phone"
                 placeholder="5xxxxxxxxx"
-                @input="$v.user.phone.$touch()"
-                @blur="$v.user.phone.$touch()"
+                @input="$v.editUser.phoneNumber.$touch()"
+                @blur="$v.editUser.phoneNumber.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
+              <v-autocomplete
+                v-model="editUser.roleGroup"
+                label="Role Grup"
+                :item-text="(item) => item.name"
+                :item-value="(item) => item"
+                :error-messages="
+                  validationMessages($v.editUser.roleGroup, 'Role Grup')
+                "
+                @input="$v.editUser.roleGroup.$touch()"
+                @blur="$v.editUser.roleGroup.$touch()"
+                prepend-inner-icon="mdi-account-star"
+                :items="roleGroupList"
+                @change="roleGroupChange()"
+              ></v-autocomplete>
+            </div>
+            <div class="col-lg-6">
+              <v-autocomplete
+                v-model="editUser.role"
+                label="Role"
+                item-text="name"
+                item-value="id"
+                :error-messages="validationMessages($v.editUser.role, 'Role')"
+                @input="$v.editUser.role.$touch()"
+                @blur="$v.editUser.role.$touch()"
+                prepend-inner-icon="mdi-account-star"
+                :items="roleList"
+              ></v-autocomplete>
+            </div>
+            <div
+              class="col-lg-6"
+              v-if="editUser.roleGroup && editUser.roleGroup.id == 3"
+            >
               <v-text-field
-                v-model="user.current_code"
+                v-model="editUser.current_code"
                 label="Cari Kod"
                 prepend-inner-icon="mdi-cog"
               ></v-text-field>
             </div>
-            <div class="col-lg-6">
+            <div
+              class="col-lg-6"
+              v-if="editUser.roleGroup && editUser.roleGroup.id != 3"
+            >
               <v-text-field
-                v-model="user.salesman_code"
+                v-model="editUser.salesman_code"
                 label="Plasiyer Kod"
                 prepend-inner-icon="mdi-cog"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-autocomplete
-                v-model="user.rolegrup"
-                label="Role Grup"
-                :error-messages="validationMessages($v.user.rolegrup,'Role Grup')"
-                @input="$v.user.rolegrup.$touch()"
-                @blur="$v.user.rolegrup.$touch()"
-                prepend-inner-icon="mdi-account-star"
-                :items="roleGroupList"
+                
+                label="Şube Kodu"
+                prepend-inner-icon="mdi-office-building"
+                :items="companyBranchList"
+              ></v-autocomplete>
+            </div>
+            <div class="col-lg-6">
+              <v-autocomplete
+                label="Depo Kodu"
+                prepend-inner-icon="mdi-warehouse"
+                :items="warehouseList"
+              ></v-autocomplete>
+            </div>
+            <div class="col-lg-6">
+              <v-autocomplete
+                label="Kasa Kodu"
+                prepend-inner-icon="mdi-cash-lock"
+                :items="warehouseList"
               ></v-autocomplete>
             </div>
           </div>
@@ -121,7 +185,6 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  
 </template>
 
 <script>
@@ -132,10 +195,9 @@ import {
   email,
 } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
-import { validationMessages } from "@/validationMessages.js"
+import { validationMessages } from "@/validationMessages.js";
 //import simplebar from "simplebar-vue";
-import { mapActions } from "vuex";
-
+import { mapActions, mapState } from "vuex";
 
 export default {
   mixins: [validationMixin],
@@ -143,22 +205,27 @@ export default {
   validations() {
     const self = this;
     return {
-      user: {
-      name: { required},
-      surname: { required },
-      email: { required, email },
-      username: { required },
-      password: self.processType == 'new' ? { required } : {},
-      tckn: { required, maxLength: maxLength(11), minLength: minLength(11) },
-      phone: { required, maxLength: maxLength(10), minLength: minLength(10) },
-      rolegrup: { required },
-    },
-    }
-    
+      editUser: {
+        firstName: { required },
+        lastName: { required },
+        email: { required, email },
+        userName: { required },
+        roleGroup: { required },
+        role: { required },
+        password: self.processType == "new" ? { required } : {},
+        trin: { required, maxLength: maxLength(11), minLength: minLength(11) },
+        phoneNumber: {
+          required,
+          maxLength: maxLength(10),
+          minLength: minLength(10),
+        },
+        rolegrup: { required },
+      },
+    };
   },
 
   components: {
-  //  simplebar
+    //  simplebar
   },
 
   props: {
@@ -169,75 +236,198 @@ export default {
     userProp: {
       type: Object,
       default: () => ({
-        tckn: "",
-        full_name: "",
-        name: "",
-        surname: "",
-        username: "",
+        firstName: "",
+        lastName: "",
+        userName: "",
         email: "",
-        phone: "",
-        current_code: "",
-        salesman_code: "",
-        last_login: "",
-        rolegrup: "",
-        password: "",
-        status: true,
+        passwordHash: "",
+        passwordSalt: "",
+        trin: "",
+        phoneNumber: null,
+        erpCode: "",
+        erpName: "",
+        salesPersonCode: null,
+        branchCode: null,
+        warehouseCode: null,
+        projectCode: null,
+        safeCode: null,
+        sendEmail: true,
+        registerDate: "",
+        isActive: true,
+        lastLoginDate: "",
+        loginCount: null,
+        roleGroup: null,
+        role: null,
       }),
     },
-    processType:{
+    processType: {
       type: String,
-      default: "new"
-    }
+      default: "new",
+    },
   },
-  computed: {},
+  computed: {
+    ...mapState("auth", ["user"])
+  },
   data() {
     return {
       dialog: false,
       showPassword: false,
-      roleGroupList: ["Yönetici", "Plasiyer", "Müşteri"],
-      user: {
-        tckn: "",
-        full_name: "",
-        name: "",
-        surname: "",
-        username: "",
+      roleGroupList: [],
+      roleList: [],
+      warehouseList: [],
+      companyBranchList: [],
+      bankSafeDepositsList: [],
+      editUser: {
+        firstName: "",
+        lastName: "",
+        userName: "",
         email: "",
-        phone: "",
-        current_code: "",
-        salesman_code: "",
-        last_login: "",
-        rolegrup: "",
-        status: true,
+        passwordHash: "",
+        passwordSalt: "",
+        trin: "",
+        phoneNumber: null,
+        erpCode: "",
+        erpName: "",
+        salesPersonCode: null,
+        branchCode: null,
+        warehouseCode: null,
+        projectCode: null,
+        safeCode: null,
+        sendEmail: true,
+        registerDate: "",
+        isActive: true,
+        lastLoginDate: "",
+        loginCount: null,
+        roleGroup: null,
+        role: null,
       },
     };
   },
   methods: {
-    ...mapActions("user",["saveUserToUserList"]),
+    ...mapActions("user", [
+      "saveUserToUserList",
+      "fetchSingleUser",
+      "fetchRoleGroupList",
+      "fetchRoleList",
+    ]),
+    ...mapActions("warehouse", [
+      "fetchWarehouseList",
+    ]),
+    ...mapActions("company", [
+      "fetchBranchList",
+    ]),
+    ...mapActions("bank", [
+      "fetchSafeDepositsList",
+    ]),
     validationMessages,
-    closeDialog(){
+    roleGroupChange() {
+      (this.editUser.role = null), this.getRoleList();
+    },
+    closeDialog() {
       this.dialog = false;
       this.$v.$reset();
     },
-    saveForm(){
+    saveForm() {
       this.$v.$touch();
-      console.log(this.$v);
-      if(!this.$v.$invalid){
-        this.saveUserToUserList(this.user);
+      if (!this.$v.$invalid) {
+        this.saveUserToUserList(this.editUser);
         this.dialog = false;
       }
+    },
+    async getRoleGroupList() {
+      this.roleGroupList = await this.fetchRoleGroupList({
+        params: {
+          userId: this.user.UserId,
+        },
+      });
+    },
+    async getRoleList() {
+      this.roleList = await this.fetchRoleList({
+        params: {
+          roleGroupId: this.editUser.roleGroup.id,
+        },
+      });
+    },
+    async getUser() {
+      this.editUser = await this.fetchSingleUser({
+        urlSegments: this.editUser.id,
+      });
+    },
+    async getWarehouseList(){
+      this.warehouseList = await this.fetchWarehouseList({
+        params: {
+          branchCode: 1
+        }
+      })
+    },
+    async getCompanyBranchList(){
+      this.warehouseList = await this.fetchBranchList({
+        params: {
+          branchCode: 1
+        }
+      })
+    },
+    async getSafetyDeposits(){
+      this.bankSafeDepositsList = await this.fetchSafeDepositsList({
+        params:{
+          branchCode: 5
+        }
+      })
     }
   },
   watch: {
-    dialog: function (newVal) {
-      this.$emit("dialogChange", newVal);  
+    dialog: async function (newVal) {
+      if (newVal) {
+        if(this.processType == 'edit')
+          await this.getUser();
+
+        await this.getRoleGroupList();
+
+        await this.getWarehouseList();
+
+        await this.getCompanyBranchList();
+
+        await this.getSafetyDeposits();
+
+        if (this.editUser.roleGroup) {
+          await this.getRoleList();
+        }
+      } else {
+        this.editUser = {
+          firstName: "",
+          lastName: "",
+          userName: "",
+          email: "",
+          passwordHash: "",
+          passwordSalt: "",
+          trin: "",
+          phoneNumber: null,
+          erpCode: "",
+          erpName: "",
+          salesPersonCode: null,
+          branchCode: null,
+          warehouseCode: null,
+          projectCode: null,
+          safeCode: null,
+          sendEmail: true,
+          registerDate: "",
+          isActive: true,
+          lastLoginDate: "",
+          loginCount: null,
+          roleGroup: null,
+          role: null,
+        };
+      }
+
+      this.$emit("dialogChange", newVal);
     },
     showDialog: function (newVal) {
       this.dialog = newVal;
     },
     userProp: function (newVal) {
-      console.log(newVal)
-      this.user = newVal;
-    }
+      newVal;
+      //this.editUser = newVal;
+    },
   },
 };
 </script>
