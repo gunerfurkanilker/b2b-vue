@@ -29,6 +29,7 @@ export const state = {
     async fetchBranchList(context, { params,body }) {
       context;
       let result = await getBranchList(params,body)
+      console.log("Şube Kod Liste", result);
       return result.data.data;
     }
   };

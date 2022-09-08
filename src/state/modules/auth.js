@@ -5,7 +5,8 @@ import jwt_decode from "jwt-decode";
 
 export const state = {
     user: null,
-    token: null
+    token: null,
+    loginLoadingStatus: false
 }
 
 export const mutations = {
@@ -14,6 +15,9 @@ export const mutations = {
     },
     setToken(state, newValue) {
         state.token = newValue
+    },
+    setLoginLoadingStatus(state, newValue) {
+        state.loginLoadingStatus = newValue
     },
     unsetUser(state){
         state.user = null;
@@ -28,8 +32,10 @@ export const getters = {
 
 export const actions = {
    
-    async tryLogin( {commit} ,{username, password} ) {
+    async tryLogin( context ,{username, password} ) {
+        context.commit("setLoginLoadingStatus",true);
         let response = await login(username,password);
+        context.commit("setLoginLoadingStatus",false);
         if(response.error)
             showProcessErrorMessage({
                 title: 'Giriş Yapılamadı',
@@ -37,8 +43,8 @@ export const actions = {
             })
         else{
             let userInfo = jwt_decode(response.data.token);
-            commit("setUser",userInfo);
-            commit("setToken",response.data.token);
+            context.commit("setUser",userInfo);
+            context.commit("setToken",response.data.token);
             router.push("/");
         }    
             

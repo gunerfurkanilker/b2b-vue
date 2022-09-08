@@ -135,6 +135,7 @@ export default {
   },
   watch: {
     perPage: function (newVal) {
+      this.currentPage = 1;
       this.fetchUserList({
         params: {
           userId: this.user.UserId,

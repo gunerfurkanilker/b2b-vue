@@ -5,7 +5,6 @@ import { showProcessErrorMessage } from "../state/alertHelpers.js";
 
 async function prepareRequest(config, request) {
 
-
     let result = axios.post(BRIDGE_URL,request,config);
 
     result.catch(error => {
@@ -14,13 +13,11 @@ async function prepareRequest(config, request) {
             text: error.response ? error.response.data.message : error.message,
         })
     })
-    return result
-
-
-
+    return result;
+    
 }
 
-function setParamsToURL(url, params, segmentArray = []) {
+function setParamsToURL(url, params, urlSegments = []) {
     let paramsStr = "";
 
     for (let key in params)
@@ -31,9 +28,9 @@ function setParamsToURL(url, params, segmentArray = []) {
         paramsStr = "?" + paramsStr;
 
     let segmentString = "";    
-    for(let i = 0; i < segmentArray.length; i++)
+    for(let i = 0; i < urlSegments.length; i++)
     {
-        segmentString =segmentString +  "/" + segmentArray[i]; 
+        segmentString =segmentString +  "/" + urlSegments[i]; 
     }    
 
     return API_BASE_URL + url + segmentString + paramsStr;

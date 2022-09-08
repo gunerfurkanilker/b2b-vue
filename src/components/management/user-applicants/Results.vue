@@ -2,6 +2,15 @@
 <div class="card">
   <div class="card-body">
     <div class="row mb-3">
+      <div class="col-lg-12 text-end">
+          <v-btn
+            color="success darken-2"
+            text
+            small
+            @click="showNewUserReferanceDialog = !showNewUserReferanceDialog"
+            ><v-icon small left>mdi-account-plus</v-icon> Referans Ekle</v-btn
+          >
+        </div>
       <div class="col-lg-12 d-flex flex-wrap">
         <div>
           <p class="text-center">Gösterilen Kayıt Sayısı</p>
@@ -40,14 +49,14 @@
           v-model="currentPage"
           circle
           class="my-4"
-          :length="this.userApplicantList.length % this.perPage == 0 && this.userApplicantList.length > this.perPage ? this.userApplicantList.length / this.perPage : parseInt(this.userApplicantList.length / this.perPage) + 1"
+          :length="this.userReferanceList.length % this.perPage == 0 && this.userReferanceList.length > this.perPage ? this.userReferanceList.length / this.perPage : parseInt(this.userReferanceList.length / this.perPage) + 1"
           :total-visible="5"
         ></v-pagination>
       </div>
     </div>
   </div>
 
-  <EditUserDialog :processType="'new'" :showDialog="showNewUserDialog" @dialogChange="data => showNewUserDialog = data"></EditUserDialog>
+  <EditUserReferanceDialog :processType="'new'" :showDialog="showNewUserReferanceDialog" @dialogChange="data => showNewUserReferanceDialog = data"></EditUserReferanceDialog>
   
 </div>
   
@@ -56,30 +65,37 @@
 <script>
 import ResultTableView from "@/components/management/user-applicants/results/ResultsTableView.vue";
 
-import EditUserDialog from "./dialogs/EditUserDialog.vue";
+import EditUserReferanceDialog from "./dialogs/EditUserReferanceDialog.vue";
 
 import { mapState, mapActions } from "vuex";
 
 export default {
   components: {
     ResultTableView,
-    EditUserDialog
+    EditUserReferanceDialog
   },
   created() {
-    this.fetchUserApplicantList();
+    this.fetchUserReferanceList({
+      params: {
+
+      },
+      body: {
+        
+      }
+    });
   },
   computed: {
-    ...mapState("user",["userApplicantList"])
+    ...mapState("user",["userReferanceList"])
   },
   data() {
     return {
       perPage: 10,
       currentPage: 1,
-      showNewUserDialog:false
+      showNewUserReferanceDialog:false
     };
   },
   methods: {
-    ...mapActions("user",["fetchUserApplicantList"]),
+    ...mapActions("user",["fetchUserReferanceList"]),
     clickLabel(item) {
       console.log("Click", item);
     },

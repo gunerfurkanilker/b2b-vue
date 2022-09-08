@@ -13,15 +13,15 @@
           <div class="row">
             <div class="col-lg-8 mx-auto">
               <v-text-field
-                v-model="user.password"
+                v-model="password"
                 label="Şifre"
-                :error-messages="validationMessages($v.user.password,'Şifre')"
+                :error-messages="validationMessages($v.password,'Şifre')"
                 prepend-inner-icon="mdi-key"
                 @click:append="showPassword = !showPassword"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPassword ? 'text' : 'password'"
-                @input="$v.user.password.$touch()"
-                @blur="$v.user.password.$touch()"
+                @input="$v.password.$touch()"
+                @blur="$v.password.$touch()"
               ></v-text-field>
             </div>
           </div>
@@ -44,14 +44,15 @@ import { validationMixin } from "vuelidate";
 
 import { validationMessages } from "@/validationMessages.js"
 
+import { mapActions } from "vuex";
+
 
 export default {
   mixins: [validationMixin],
 
   validations: {
-    user: {
       password: { required }
-    },
+    ,
   },
 
   components: {},
@@ -77,43 +78,43 @@ export default {
     return {
       dialog: false,
       showPassword: false,
-      user: {
-        tckn: "",
-        full_name: "",
-        name: "",
-        surname: "",
-        username: "",
-        email: "",
-        phone: "",
-        current_code: "",
-        salesman_code: "",
-        last_login: "",
-        rolegrup: "",
-        password: "",
-        status: true,
-      },
+      password: "",
+      user:null
     };
   },
   methods: {
+    ...mapActions("user",["userPasswordChange"]),
     validationMessages,
     closeDialog(){
       this.dialog = false;
       this.$v.$reset();
     },
-    saveForm(){
+    async saveForm(){
       this.$v.$touch();
-      console.log(this.$v.$invalid);
+      if(!this.$v.$invalid)
+      {
+        console.log("VETTEL",this.user);
+        await this.userPasswordChange({
+          params: {
+            userId : this.user.id
+          },
+          body: {
+            "Password" : this.password
+          }
+        })
+        this.dialog = false;
+      }
     }
   },
   watch: {
     dialog: function (newVal) {
+      this.password = "";
       this.$emit("dialogChange", newVal);
     },
     showDialog: function (newVal) {
       this.dialog = newVal;
     },
     userProp: function (newVal) {
-      console.log(newVal)
       this.user = newVal;
     }
   },

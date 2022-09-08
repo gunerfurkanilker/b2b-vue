@@ -80,6 +80,8 @@
                       elevation="3"
                       small
                       raised
+                      :disabled="loginStatusLoading"
+                      :loading="loginStatusLoading"
                       @click="tryToLogIn()"
                       >GİRİŞ YAP</v-btn
                     >
@@ -112,11 +114,14 @@ import ForgotPasswordDialog from "../../../components/login/ForgotPasswordDialog
 
 import { validationMessages } from "@/validationMessages.js"
 
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   components: {
     ForgotPasswordDialog,
+  },
+  computed:{
+    ...mapState("auth",["loginStatusLoading"])
   },
   data() {
     return {

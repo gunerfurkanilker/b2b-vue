@@ -31,9 +31,10 @@ export const state = {
     async fetchWarehouseList(context,{ params,body }) {
       context.commit("setWarehouseListLoading", true)
       let result = await getList(params,body);
-      context.commit("setWarehouseList",result.data.data);
+      return result.data.data;
+      /*context.commit("setWarehouseList",result.data.data);
       console.log("WarehouseResult", result);
-      context.commit("setWarehouseListLoading", false)
+        context.commit("setWarehouseListLoading", false)
       context.commit('setWarehouseListHeaders', [
         {
           key: 'subject',
@@ -66,6 +67,8 @@ export const state = {
           class: "text-center"
         }
       ]);
+       */
+     
     }
   };
   

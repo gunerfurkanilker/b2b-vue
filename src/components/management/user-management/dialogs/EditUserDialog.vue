@@ -125,7 +125,7 @@
                 v-model="editUser.role"
                 label="Role"
                 item-text="name"
-                item-value="id"
+                :item-value="item => item"
                 :error-messages="validationMessages($v.editUser.role, 'Role')"
                 @input="$v.editUser.role.$touch()"
                 @blur="$v.editUser.role.$touch()"
@@ -138,7 +138,7 @@
               v-if="editUser.roleGroup && editUser.roleGroup.id == 3"
             >
               <v-text-field
-                v-model="editUser.current_code"
+                v-model="editUser.erpCode"
                 label="Cari Kod"
                 prepend-inner-icon="mdi-cog"
               ></v-text-field>
@@ -148,31 +148,64 @@
               v-if="editUser.roleGroup && editUser.roleGroup.id != 3"
             >
               <v-text-field
-                v-model="editUser.salesman_code"
+                v-model="editUser.salesPersonCode"
                 label="Plasiyer Kod"
                 prepend-inner-icon="mdi-cog"
               ></v-text-field>
             </div>
-            <div class="col-lg-6">
+            <div
+              class="col-lg-6"
+              v-if="editUser.roleGroup && editUser.roleGroup.id != 1"
+            >
               <v-autocomplete
-                
+                v-model="editUser.branchCode"
                 label="Şube Kodu"
                 prepend-inner-icon="mdi-office-building"
                 :items="companyBranchList"
+                item-text="name"
+                item-value="code"
+                @change="companyBranchChange"
+                :error-messages="
+                  validationMessages($v.editUser.branchCode, 'Şube Kodu')
+                "
+                @input="$v.editUser.branchCode.$touch()"
+                @blur="$v.editUser.branchCode.$touch()"
               ></v-autocomplete>
             </div>
-            <div class="col-lg-6">
+            <div
+              class="col-lg-6"
+              v-if="editUser.roleGroup && editUser.roleGroup.id != 1"
+            >
               <v-autocomplete
+                v-model="editUser.warehouseCode"
                 label="Depo Kodu"
                 prepend-inner-icon="mdi-warehouse"
                 :items="warehouseList"
+                item-text="name"
+                item-value="code"
+                :error-messages="
+                  validationMessages($v.editUser.warehouseCode, 'Depo Kodu')
+                "
+                @input="$v.editUser.warehouseCode.$touch()"
+                @blur="$v.editUser.warehouseCode.$touch()"
               ></v-autocomplete>
             </div>
-            <div class="col-lg-6">
+            <div
+              class="col-lg-6"
+              v-if="editUser.roleGroup && editUser.roleGroup.id != 1"
+            >
               <v-autocomplete
+                v-model="editUser.safeCode"
                 label="Kasa Kodu"
                 prepend-inner-icon="mdi-cash-lock"
-                :items="warehouseList"
+                :items="bankSafeDepositsList"
+                item-text="name"
+                item-value="code"
+                :error-messages="
+                  validationMessages($v.editUser.safeCode, 'Kasa Kodu')
+                "
+                @input="$v.editUser.safeCode.$touch()"
+                @blur="$v.editUser.safeCode.$touch()"
               ></v-autocomplete>
             </div>
           </div>
@@ -180,8 +213,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text color="secondary" @click="closeDialog()">İptal</v-btn>
-        <v-btn text color="success" @click="saveForm">Kaydet</v-btn>
+        <v-btn text color="secondary" @click="closeDialog()" :loading="pendingRequest">İptal</v-btn>
+        <v-btn text color="success" @click="saveForm" :loading="pendingRequest">Kaydet</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -219,7 +252,6 @@ export default {
           maxLength: maxLength(10),
           minLength: minLength(10),
         },
-        rolegrup: { required },
       },
     };
   },
@@ -266,7 +298,10 @@ export default {
     },
   },
   computed: {
-    ...mapState("auth", ["user"])
+    ...mapState("auth", ["user"]),
+  },
+  mounted() {
+    
   },
   data() {
     return {
@@ -301,24 +336,21 @@ export default {
         roleGroup: null,
         role: null,
       },
+      pendingRequest: false
     };
   },
   methods: {
     ...mapActions("user", [
-      "saveUserToUserList",
+      "userAdd",
+      "userUpdate",
       "fetchSingleUser",
       "fetchRoleGroupList",
       "fetchRoleList",
+      "fetchUserList"
     ]),
-    ...mapActions("warehouse", [
-      "fetchWarehouseList",
-    ]),
-    ...mapActions("company", [
-      "fetchBranchList",
-    ]),
-    ...mapActions("bank", [
-      "fetchSafeDepositsList",
-    ]),
+    ...mapActions("warehouse", ["fetchWarehouseList"]),
+    ...mapActions("company", ["fetchBranchList"]),
+    ...mapActions("bank", ["fetchSafeDepositsList"]),
     validationMessages,
     roleGroupChange() {
       (this.editUser.role = null), this.getRoleList();
@@ -327,11 +359,52 @@ export default {
       this.dialog = false;
       this.$v.$reset();
     },
-    saveForm() {
+    async saveForm() {
       this.$v.$touch();
+      console.log("IS INVALID", this.$v.$invalid);
       if (!this.$v.$invalid) {
-        this.saveUserToUserList(this.editUser);
-        this.dialog = false;
+        this.pendingRequest = true;
+        let requestBody = {
+          FirstName: this.editUser.firstName,
+          LastName: this.editUser.lastName,
+          UserName: this.editUser.userName,
+          Email: this.editUser.email,
+          Password: this.editUser.password,
+          Trin: this.editUser.trin,
+          PhoneNumber: this.editUser.phoneNumber,
+          ErpCode: this.editUser.erpCode,
+          SalesPersonCode: this.editUser.salesPersonCode,
+          RoleGroupId: this.editUser.roleGroup.id,
+          RoleId: this.editUser.role.id,
+          CashSafeCode: this.editUser.safeCode,
+          isActive: true,
+        };
+        if(this.processType == 'new')
+        {
+          let result = await this.userAdd({
+            body:requestBody
+          })
+          console.log("ADD_RESULT",result)
+          if(result.data.success)
+          {
+            this.dialog = false;
+          }
+          
+        }
+        else
+        {
+          requestBody.Id = this.editUser.id
+          let result = await this.userUpdate({
+            body:requestBody
+          });
+          if(result.data.success)
+          {
+            this.dialog = false;
+          }
+          
+            
+        }
+        this.pendingRequest = false;    
       }
     },
     async getRoleGroupList() {
@@ -342,44 +415,49 @@ export default {
       });
     },
     async getRoleList() {
+      if(this.editUser.roleGroup)
       this.roleList = await this.fetchRoleList({
         params: {
           roleGroupId: this.editUser.roleGroup.id,
         },
       });
     },
-    async getUser() {
+    async getUser(userId) {
       this.editUser = await this.fetchSingleUser({
-        urlSegments: this.editUser.id,
+        urlSegments: [userId],
       });
     },
-    async getWarehouseList(){
-      this.warehouseList = await this.fetchWarehouseList({
-        params: {
-          branchCode: 1
-        }
-      })
+    async getWarehouseList(companyBranch = null) {
+      if (companyBranch)
+        this.warehouseList = await this.fetchWarehouseList({
+          params: {
+            branchCode: companyBranch,
+          },
+        });
     },
-    async getCompanyBranchList(){
-      this.warehouseList = await this.fetchBranchList({
+    async getCompanyBranchList() {
+      this.companyBranchList = await this.fetchBranchList({
         params: {
-          branchCode: 1
-        }
-      })
+          branchCode: 1,
+        },
+      });
     },
-    async getSafetyDeposits(){
-      this.bankSafeDepositsList = await this.fetchSafeDepositsList({
-        params:{
-          branchCode: 5
-        }
-      })
-    }
+    async getSafetyDeposits(companyBranch = null) {
+      if (companyBranch)
+        this.bankSafeDepositsList = await this.fetchSafeDepositsList({
+          params: {
+            branchCode: companyBranch,
+          },
+        });
+    },
+    companyBranchChange(value) {
+      this.getWarehouseList(value);
+      this.getSafetyDeposits(value);
+    },
   },
   watch: {
     dialog: async function (newVal) {
       if (newVal) {
-        if(this.processType == 'edit')
-          await this.getUser();
 
         await this.getRoleGroupList();
 
@@ -389,9 +467,8 @@ export default {
 
         await this.getSafetyDeposits();
 
-        if (this.editUser.roleGroup) {
-          await this.getRoleList();
-        }
+        await this.getRoleList();
+        
       } else {
         this.editUser = {
           firstName: "",
@@ -424,9 +501,10 @@ export default {
     showDialog: function (newVal) {
       this.dialog = newVal;
     },
-    userProp: function (newVal) {
-      newVal;
-      //this.editUser = newVal;
+    userProp: async function (newVal) {
+      if (this.processType == "edit"){
+        await this.getUser(newVal.id)
+      } 
     },
   },
 };

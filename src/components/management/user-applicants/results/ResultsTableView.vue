@@ -2,14 +2,14 @@
   <div class="card">
     <div class="card-body">
       <b-table
-        :items="userApplicantList"
-        :fields="userApplicantListHeaders"
+        :items="userReferanceList"
+        :fields="userReferanceListHeaders"
         hover
         responsive
         sort-icon-left
         :per-page="perPage"
         :current-page="currentPage"
-        :busy="userApplicantListLoading"
+        :busy="userReferanceListLoading"
       >
         <template #table-busy>
           <div class="text-center">
@@ -21,10 +21,16 @@
           </div>
         </template>
         <template #cell(status)="data">
-          <v-chip small :color="data.item.status ? 'success lighten-1' : 'secondary'" label> {{ data.item.status ? 'Onaylandı' : 'Onay Bekliyor' }} </v-chip>
+          <v-chip
+            small
+            :color="data.item.status ? 'success lighten-1' : 'secondary'"
+            label
+          >
+            {{ data.item.status ? "Onaylandı" : "Onay Bekliyor" }}
+          </v-chip>
         </template>
         <template #cell(process)="data">
-          <div class="text-center" v-if="!data.item.status">
+          <div class="text-center">
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -32,7 +38,17 @@
                   v-on="on"
                   icon
                   color="success darken-2"
-                  @click="openUserEditDialog(data.item, 'edit')"
+                  @click="
+                    userReferanceApprove({
+                      params: {},
+                      body: {
+                        userReferenceId: 0,
+                        roleGroupId: 0,
+                        roleId: 0,
+                        userId: 0,
+                      },
+                    })
+                  "
                 >
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
@@ -41,7 +57,23 @@
             </v-tooltip>
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" @click="openChangePasswordDialog(data.item)">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  icon
+                  color="danger darken-2"
+                  @click="
+                    userReferanceDeny({
+                      params: {},
+                      body: {
+                        userReferenceId: 0,
+                        roleGroupId: 0,
+                        roleId: 0,
+                        userId: 0,
+                      },
+                    })
+                  "
+                >
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </template>
@@ -50,16 +82,21 @@
           </div>
         </template>
       </b-table>
-      
-      
+
+      <EditUserReferanceDialog
+        :userReferanceProp="userReferance"
+        :processType="'edit'"
+        :showDialog="showUserReferanceEditDialog"
+        @dialogChange="(data) => (showUserReferanceEditDialog = data)"
+      ></EditUserReferanceDialog>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
-
+import EditUserReferanceDialog from "../dialogs/EditUserReferanceDialog.vue";
 
 export default {
   props: {
@@ -72,25 +109,27 @@ export default {
   },
 
   components: {
-    
+    EditUserReferanceDialog,
   },
 
   computed: {
-    ...mapState("user", ["userApplicantList", "userApplicantListHeaders", "userApplicantListLoading"])
+    ...mapState("user", [
+      "userReferanceList",
+      "userReferanceListHeaders",
+      "userReferanceListLoading",
+    ]),
   },
-  mounted() {
-    
-  },
+  mounted() {},
   data() {
     return {
       selectRow: false,
       userData: null,
-      showUserEditDialog: false,
-      showChangePasswordDialog: false
+      showUserReferanceEditDialog: false,
+      userReferance: null,
     };
   },
   methods: {
-
+    ...mapActions("user", ["userReferanceApprove", "userReferanceDeny"]),
   },
   watch: {},
 };

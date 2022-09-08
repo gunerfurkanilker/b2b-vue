@@ -20,13 +20,25 @@
           </div>
         </template>
         <template #cell(full_name)="data">
-          {{ data.item.firstName.concat(" ",data.item.lastName) }}
+          {{ data.item.firstName.concat(" ", data.item.lastName) }}
         </template>
         <template #cell(isActive)="data">
-          <v-chip small :color="data.item.isActive ? 'success lighten-1' : 'secondary'" label> {{ data.item.isActive ? 'Aktif' : 'Pasif' }} </v-chip>
+          <v-chip
+            small
+            :color="data.item.isActive ? 'success lighten-1' : 'secondary'"
+            label
+          >
+            {{ data.item.isActive ? "Aktif" : "Pasif" }}
+          </v-chip>
         </template>
         <template #cell(lastLoginDate)="data">
-          {{ data.item.lastLoginDate ? moment(data.item.lastLoginDate).locale("tr").format("DD MM YYYY hh:mm:ss") : '' }}
+          {{
+            data.item.lastLoginDate
+              ? moment(data.item.lastLoginDate)
+                  .locale("tr")
+                  .format("DD MM YYYY hh:mm:ss")
+              : ""
+          }}
         </template>
         <template #cell(process)="data">
           <div class="text-center">
@@ -46,7 +58,13 @@
             </v-tooltip>
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" v-on="on" icon color="indigo darken-2" @click="openChangePasswordDialog(data.item)">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  icon
+                  color="indigo darken-2"
+                  @click="openChangePasswordDialog(data.item)"
+                >
                   <v-icon>mdi-lock-reset</v-icon>
                 </v-btn>
               </template>
@@ -54,7 +72,17 @@
             </v-tooltip>
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" @click="deleteUser(data.item)">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  icon
+                  color="danger darken-2"
+                  @click="userDelete({
+                    params:{
+                      userId: data.item.id
+                    }                     
+                  })"
+                >
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </template>
@@ -70,11 +98,10 @@
         @dialogChange="(data) => (showUserEditDialog = data)"
       ></EditUserDialog>
       <ChangePasswordDialog
-        :userProp="userData"
+        :userProp="userDataPasswordDialog"
         :showDialog="showChangePasswordDialog"
         @dialogChange="(data) => (showChangePasswordDialog = data)"
       ></ChangePasswordDialog>
-      
     </div>
   </div>
 </template>
@@ -85,6 +112,7 @@ import moment from "moment";
 
 import EditUserDialog from "../dialogs/EditUserDialog.vue";
 import ChangePasswordDialog from "../dialogs/ChangePasswordDialog.vue";
+
 
 export default {
   props: {
@@ -98,40 +126,37 @@ export default {
 
   components: {
     EditUserDialog,
-    ChangePasswordDialog
+    ChangePasswordDialog,
   },
 
   computed: {
-    ...mapState("user", ["userList", "userListHeaders", "userListLoading"])
+    ...mapState("user", ["userList", "userListHeaders", "userListLoading"]),
   },
-  mounted() {
-    
-  },
+  mounted() {},
   data() {
     return {
       selectRow: false,
       userData: null,
       showUserEditDialog: false,
-      showChangePasswordDialog: false
+      showChangePasswordDialog: false,
+      userDataPasswordDialog: null,
     };
   },
   methods: {
-    ...mapActions("user", ["deleteUser"]),
+    ...mapActions("user", ["userDelete"]),
     openUserEditDialog(user) {
+      console.log("USERR", user);
       this.userData = Object.assign({}, user);
       this.showUserEditDialog = !this.showUserEditDialog;
     },
-    openChangePasswordDialog(user){
-      this.userData = Object.assign({}, user);
+    openChangePasswordDialog(user) {
+      this.userDataPasswordDialog = Object.assign({}, user);
       this.showChangePasswordDialog = !this.showChangePasswordDialog;
     },
-    moment(date){
+    moment(date) {
       return moment(date);
-    }
+    },
   },
-  watch: {
-
-
-  },
+  watch: {},
 };
 </script>
