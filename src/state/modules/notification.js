@@ -26,7 +26,7 @@ export const actions = {
         commit('error', message);
     },
     clear({ commit }) {
-        console.log("CLEAR")
+
         commit('clear');
     }
 };

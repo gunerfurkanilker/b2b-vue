@@ -15,7 +15,7 @@ async function getSettings(params, body) {
     url: setParamsToURL(SETTINGS_API_URL_LIST.LIST_URL,params),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request, true);
 }
 
 async function updateErpSettings(params, body) {

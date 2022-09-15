@@ -8,9 +8,7 @@
     <v-card>
       <v-card-title>
         {{
-          processType == "new"
-            ? "Sepet Kategorisi Ekle"
-            : "Sepet Kategorisi Düzenle"
+          processType == "new" ? "Kargo Firması Ekle" : "Kargo Firması Düzenle"
         }}
         <v-spacer></v-spacer>
         <v-btn @click="closeDialog()" color="danger darken-2" icon>
@@ -20,28 +18,11 @@
       <v-card-text>
         <div class="container">
           <div class="row">
-            <div class="col-lg-12">
-              <v-text-field
-                v-model="cartCategory.title"
-                label="Başlık"
-                :error-messages="
-                  validationMessages($v.cartCategory.title, 'Başlık')
-                "
-                prepend-inner-icon="mdi-page-layout-header"
-                @input="$v.cartCategory.title.$touch()"
-                @blur="$v.cartCategory.title.$touch()"
-              ></v-text-field>
+            <div class="col-lg-6">
+              <v-text-field v-model="shippingCompany.name" label="Kargo Firma Adı"></v-text-field>
             </div>
             <div class="col-lg-6">
-              <v-switch
-                v-model="cartCategory.status"
-                inset
-                :label="
-                  cartCategory.status
-                    ? 'Durum : ' + 'Aktif'
-                    : 'Durum : ' + 'Pasif'
-                "
-              ></v-switch>
+              <v-switch v-model="shippingCompany.isActive" :label="shippingCompany.isActive ? 'Durum: ' +  'Aktif' : 'Durum: ' +  'Pasif'"></v-switch>
             </div>
           </div>
         </div>
@@ -60,6 +41,7 @@ import { required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { validationMessages } from "@/validationMessages.js";
 //import simplebar from "simplebar-vue";
+
 import { mapActions } from "vuex";
 
 export default {
@@ -68,8 +50,10 @@ export default {
   validations() {
     //const self = this;
     return {
-      cartCategory: {
-        title: { required },
+      announcement: {
+        subject: { required },
+        content: { required },
+        start_date: { required },
       },
     };
   },
@@ -83,12 +67,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    cartCategoryProp: {
+    shippingCompanyProp: {
       type: Object,
       default: () => ({
-        id: null,
-        title: "",
-        status: true,
+        name: "",
+        isActive: false,
       }),
     },
     processType: {
@@ -101,27 +84,56 @@ export default {
     return {
       dialog: false,
       showPassword: false,
-      roleGroupList: ["Yönetici", "Plasiyer", "Müşteri"],
-      cartCategory: {
-        title: "",
-        status: true,
+      shippingCompany: {
+        name: "",
+        isActive: false,
       },
     };
   },
   methods: {
-    ...mapActions("user", ["saveUserToUserList"]),
+    ...mapActions("shipping", [
+      "shippingCompanyAdd",
+      "shippingCompanyUpdate",
+      "fetchSingleShippingCompany",
+    ]),
     validationMessages,
     closeDialog() {
       this.dialog = false;
       this.$v.$reset();
     },
-    saveForm() {
-      this.$v.$touch();
-    
-      if (!this.$v.$invalid) {
-        this.saveUserToUserList(this.user);
-        this.dialog = false;
+    async saveForm() {
+      //this.$v.$touch();
+      if (this.processType == "new") {
+        await this.shippingCompanyAdd({
+          params: {},
+          body: {
+            Name: this.shippingCompany.name,
+            IsActive: this.shippingCompany.isActive,
+          },
+        });
+        
+      } else {
+        await this.shippingCompanyUpdate({
+          params: {},
+          body: {
+            Id: this.shippingCompany.id,
+            Name: this.shippingCompany.name,
+            isActive: this.shippingCompany.isActive
+          },
+        });
+       
       }
+      this.dialog = false;
+    },
+
+    async getShippingCompany(companyObject) {
+
+      let result = await this.fetchSingleShippingCompany({
+        params: {},
+        body: {},
+        urlSegments: [companyObject.id],
+      });
+      this.shippingCompany = Object.assign({},result.data.data);
     },
   },
   watch: {
@@ -131,8 +143,13 @@ export default {
     showDialog: function (newVal) {
       this.dialog = newVal;
     },
-    cartCategoryProp: function (newVal) {
-      this.cartCategory = newVal;
+    shippingCompanyProp: function (newVal) {
+      if (newVal && this.processType == 'edit') this.getShippingCompany(newVal);
+      else
+        this.shippingCompany = {
+          name: "",
+          isActive: true,
+        };
     },
   },
 };

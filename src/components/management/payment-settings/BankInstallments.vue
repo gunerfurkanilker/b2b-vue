@@ -9,32 +9,6 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-lg-12 d-flex flex-wrap justify-content-between">
-        <div>
-          <p class="text-center">Gösterilen Kayıt Sayısı</p>
-          <v-btn-toggle mandatory rounded dense>
-            <v-btn @click="perPage = 10"> 10 </v-btn>
-            <v-btn @click="perPage = 20"> 20 </v-btn>
-            <v-btn @click="perPage = 30"> 30 </v-btn>
-            <v-btn @click="perPage = 40"> 50 </v-btn>
-            <v-btn @click="perPage = 50"> 100 </v-btn>
-          </v-btn-toggle>
-        </div>
-        <div class="ms-auto">
-          <v-text-field
-            class="mt-5 pt-3"
-            outlined
-            rounded
-            dense
-            placeholder="Arama Yapın..."
-            clearable
-            hide-details
-            append-icon="mdi-magnify"
-          ></v-text-field>
-        </div>
-      </div>
-    </div>
-    <div class="row">
       <div class="col-md-12">
         <b-table
           :items="bankInstallmentList"
@@ -55,8 +29,14 @@
               ></b-spinner>
             </div>
           </template>
-          <template #cell(status)="data">
-            <v-chip small :color="data.item.status ? 'success darken-2' : 'danger darken-2'">{{ data.item.status ? 'Aktif' : 'Pasif' }}</v-chip>
+          <template #cell(bank)="data">
+            {{ data.item.bank ? data.item.bank.name : '' }}
+          </template>
+          <template #cell(number)="data">
+            {{ data.item.number ? data.item.number + ' Taksit' : '' }}
+          </template>
+          <template #cell(isActive)="data">
+            <v-chip small label :color="data.item.isActive ? 'success ligthen-2' : 'secondary ligthen-2'">{{ data.item.isActive ? 'Aktif' : 'Pasif' }}</v-chip>
           </template>
           <template #cell(process)="data">
             <div class="text-center">
@@ -69,15 +49,19 @@
                     color="amber darken-2"
                     @click="openBankInstallmentDialog('edit',data.item)"
                   >
-                    <v-icon>mdi-pencil</v-icon>
+                    <v-icon>mdi-pencil-outline</v-icon>
                   </v-btn>
                 </template>
                 <span>Düzenle</span>
               </v-tooltip>
               <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2">
-                    <v-icon>mdi-delete</v-icon>
+                  <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" @click="bankInstallmentDelete({
+                    params:{
+                      installmentId: data.item.id
+                    }
+                  })">
+                    <v-icon>mdi-delete-outline</v-icon>
                   </v-btn>
                 </template>
                 <span>Sil</span>
@@ -104,7 +88,7 @@
       </div>
     </div>
     <EditBankInstallmentDialog
-      :bankAccountProp="bankInstallment"
+      :bankInstallmentProp="bankInstallmentProp"
       :processType="processType"
       :showDialog="editBankInstallmentDialog"
       @dialogChange="(data) => (editBankInstallmentDialog = data)"
@@ -126,21 +110,28 @@ export default {
     ...mapState("bank", ["bankInstallmentList", "bankInstallmentListHeaders", "bankInstallmentListLoading"]),
   },
   mounted() {
-    this.fetchBankInstallmentList()
+    this.fetchBankInstallmentList({
+      params:{
+
+      },
+      body:{
+
+      }
+    })
   },
   data() {
     return {
       editBankInstallmentDialog: false,
-      bankInstallment: null,
+      bankInstallmentProp: {},
       processType: null,
       currentPage: 1,
       perPage: 10,
     };
   },
   methods: {
-    ...mapActions("bank",["fetchBankInstallmentList"]),
+    ...mapActions("bank",["fetchBankInstallmentList","bankInstallmentDelete"]),
     openBankInstallmentDialog(processType,data = null) {
-      this.bankAccount = data;
+      this.bankInstallmentProp = data;
       this.processType = processType;
       this.editBankInstallmentDialog = true;
     },

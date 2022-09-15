@@ -34,7 +34,6 @@ const router = new VueRouter({
 
 // Before each route evaluates...
 router.beforeEach((routeTo, routeFrom, next) => {
-  console.log(routeTo)
   if(!store.getters['auth/getUser'] && routeTo.name != "login")
     next("login")
   else

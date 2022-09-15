@@ -51,7 +51,7 @@
                   color="amber darken-2"
                   @click="openUserEditDialog(data.item, 'edit')"
                 >
-                  <v-icon>mdi-account-edit</v-icon>
+                  <v-icon>mdi-account-edit-outline</v-icon>
                 </v-btn>
               </template>
               <span>Kullanıcı Düzenle</span>
@@ -83,7 +83,7 @@
                     }                     
                   })"
                 >
-                  <v-icon>mdi-delete</v-icon>
+                  <v-icon>mdi-delete-outline</v-icon>
                 </v-btn>
               </template>
               <span>Kullanıcıyı Sil</span>
@@ -145,7 +145,6 @@ export default {
   methods: {
     ...mapActions("user", ["userDelete"]),
     openUserEditDialog(user) {
-      console.log("USERR", user);
       this.userData = Object.assign({}, user);
       this.showUserEditDialog = !this.showUserEditDialog;
     },

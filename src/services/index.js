@@ -2,17 +2,24 @@ const axios = require('axios').default;
 import { API_BASE_URL } from "./url.js";
 import { BRIDGE_URL } from "./url.js";
 import { showProcessErrorMessage } from "../state/alertHelpers.js";
+import store from '../state/store';
 
-async function prepareRequest(config, request) {
+async function prepareRequest(config, request, loading = false) {
 
-    let result = axios.post(BRIDGE_URL,request,config);
+    store.commit('process/initProcessLoading',loading)
 
-    result.catch(error => {
-        showProcessErrorMessage({
-            title: 'Hata Oluştu',
-            text: error.response ? error.response.data.message : error.message,
+    let result = await axios.post(BRIDGE_URL,request,config)
+        .catch(error => {
+            showProcessErrorMessage({
+                title: 'Hata Oluştu',
+                text: error.response ? error.response.data.message : error.message,
+            })
+            return false;
         })
-    })
+        .finally(() => {
+            store.commit('process/initProcessLoading',false)
+        })
+
     return result;
     
 }

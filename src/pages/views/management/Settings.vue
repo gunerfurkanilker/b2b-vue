@@ -30,38 +30,23 @@
               Mail Ayarları
               <v-icon> mdi-email </v-icon>
             </v-tab>
+            <v-tab>
+              Kargo Firmaları
+              <v-icon> mdi-truck </v-icon>
+            </v-tab>
 
-            <v-tab-item>
-              <ErpSettings v-if="!settingsLoading" :settingsProp="erpSettingsProp"></ErpSettings>
-              <div v-else class="text-center">
-                <b-spinner
-                  variant="indigo"
-                  size="lg"
-                  label="Lütfen Bekleyin..."
-                ></b-spinner>
-              </div>
+            <v-tab-item>        
+              <ErpSettings v-if="!processLoading" :settingsProp="erpSettingsProp"></ErpSettings>
             </v-tab-item>
             <v-tab-item>
-              <GeneralSettings v-if="!settingsLoading"
-                :settingsProp="generalSettingsProp"
+              <GeneralSettings v-if="!processLoading" :settingsProp="generalSettingsProp" 
               ></GeneralSettings>
-              <div v-else class="text-center">
-                <b-spinner
-                  variant="indigo"
-                  size="lg"
-                  label="Lütfen Bekleyin..."
-                ></b-spinner>
-              </div>
             </v-tab-item>
             <v-tab-item>
-              <MailSettings v-if="!settingsLoading" :settingsProp="mailSettingsProp"></MailSettings>
-              <div v-else class="text-center">
-                <b-spinner
-                  variant="indigo"
-                  size="lg"
-                  label="Lütfen Bekleyin..."
-                ></b-spinner>
-              </div>
+              <MailSettings v-if="!processLoading" :settingsProp="mailSettingsProp"></MailSettings>
+            </v-tab-item>
+            <v-tab-item>
+              <CargoCompanySettings></CargoCompanySettings>
             </v-tab-item>
           </v-tabs>
         </div>
@@ -76,6 +61,7 @@ import PageHeader from "@/components/page-header";
 import ErpSettings from "@/components/management/settings/ErpSettings.vue";
 import GeneralSettings from "@/components/management/settings/GeneralSettings.vue";
 import MailSettings from "@/components/management/settings/MailSettings.vue";
+import CargoCompanySettings from "@/components/management/settings/CargoCompanySettings.vue";
 
 import { mapActions, mapState } from "vuex";
 
@@ -90,6 +76,7 @@ export default {
     ErpSettings,
     GeneralSettings,
     MailSettings,
+    CargoCompanySettings
   },
   computed: {
     ...mapState("settings", [
@@ -98,12 +85,12 @@ export default {
       "mailSettings",
       "settingsLoading",
     ]),
+    ...mapState("process", [
+      "processLoading"
+    ]),
   },
   mounted() {
-    this.fetchSettings({
-      params: {},
-      body: {},
-    });
+    this.setSettings();
   },
   data() {
     return {
@@ -125,13 +112,10 @@ export default {
   methods: {
     async setSettings() {
       let result = await this.fetchSettings({ params: {}, body: {} });
-      console.log(result);
+      result;
       this.erpSettingsProp = Object.assign({}, this.erpSettings);
       this.generalSettingsProp = Object.assign({}, this.generalSettings);
       this.mailSettingsProp = Object.assign({}, this.mailSettings);
-    },
-    clickLabel(item) {
-      console.log("Click", item);
     },
     ...mapActions("settings", ["fetchSettings"]),
   },

@@ -70,7 +70,7 @@
               color="success darken-2"
               depressed
               @click="saveMailSettings()"
-              :loading="requestPending"
+             
               ><v-icon left>mdi-content-save</v-icon>Kaydet</v-btn
             >
           </div>
@@ -101,14 +101,14 @@ export default {
   data() {
     return {
       mailSettingsObject: {},
-      requestPending: false
+      
     };
   },
   methods: {
     ...mapActions("settings", ["mailSettingsUpdate"]),
     async saveMailSettings() {
-      this.requestPending = true;
-      let result = await this.mailSettingsUpdate({
+     
+      await this.mailSettingsUpdate({
         params: {
           userId: this.user.UserId,
         },
@@ -121,9 +121,13 @@ export default {
           emailSSL: this.mailSettingsObject.emailSSL,
         },
       });
-      this.requestPending = false;
-      console.log("MAIL_SETTINGS_UPDATE_RESULT", result);
+      
     },
   },
+  watch:{
+    "settingsProp" : function(newVal) {
+      this.mailSettingsObject = Object.assign({},newVal )
+    }
+  }
 };
 </script>

@@ -20,57 +20,76 @@
           <div class="row">
             <div class="col-lg-6">
               <v-autocomplete
-                v-model="bankParameter.banka"
+                v-model="bankParameter.bankId"
                 label="Banka"
+                :item-text="(item) => item.name"
+                :item-value="(item) => item.id"
                 :error-messages="
                   validationMessages($v.bankParameter.banka, 'Banka')
                 "
-                @input="$v.bankParameter.banka.$touch()"
-                @blur="$v.bankParameter.banka.$touch()"
+                @input="$v.bankParameter.bankId.$touch()"
+                @blur="$v.bankParameter.bankId.$touch()"
                 prepend-inner-icon="mdi-bank"
                 :items="bankList"
               ></v-autocomplete>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="bankParameter.merchant_number"
+                v-model="bankParameter.merchantNumber"
                 label="Merchant Number"
-                :error-messages="validationMessages($v.bankParameter.merchant_number, 'Merchant Number')"
+                :error-messages="
+                  validationMessages(
+                    $v.bankParameter.merchantNumber,
+                    'Merchant Number'
+                  )
+                "
                 prepend-inner-icon="mdi-numeric"
-                @input="$v.bankParameter.merchant_number.$touch()"
-                @blur="$v.bankParameter.merchant_number.$touch()"
+                @input="$v.bankParameter.merchantNumber.$touch()"
+                @blur="$v.bankParameter.merchantNumber.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="bankParameter.terminal_no"
+                v-model="bankParameter.terminalNumber"
                 label="Terminal No"
-                :error-messages="validationMessages($v.bankParameter.terminal_no, 'Terminal No')"
+                :error-messages="
+                  validationMessages(
+                    $v.bankParameter.terminalNumber,
+                    'Terminal No'
+                  )
+                "
                 prepend-inner-icon="mdi-numeric"
-                @input="$v.bankParameter.terminal_no.$touch()"
-                @blur="$v.bankParameter.terminal_no.$touch()"
+                @input="$v.bankParameter.terminalNumber.$touch()"
+                @blur="$v.bankParameter.terminalNumber.$touch()"
               ></v-text-field>
             </div>
 
             <div class="col-lg-6">
               <v-text-field
-                v-model="bankParameter.security_code"
+                v-model="bankParameter.securityCode"
                 label="Security Code"
-                :error-messages="validationMessages($v.bankParameter.security_code, 'Security Code')"
+                :error-messages="
+                  validationMessages(
+                    $v.bankParameter.securityCode,
+                    'Security Code'
+                  )
+                "
                 prepend-inner-icon="mdi-lock"
-                @input="$v.bankParameter.security_code.$touch()"
-                @blur="$v.bankParameter.security_code.$touch()"
+                @input="$v.bankParameter.securityCode.$touch()"
+                @blur="$v.bankParameter.securityCode.$touch()"
               ></v-text-field>
             </div>
 
             <div class="col-lg-6">
               <v-text-field
-                v-model="bankParameter.url"
+                v-model="bankParameter.bankUrl"
                 label="URL"
-                :error-messages="validationMessages($v.bankParameter.url, 'URL')"
+                :error-messages="
+                  validationMessages($v.bankParameter.bankUrl, 'URL')
+                "
                 prepend-inner-icon="mdi-web"
-                @input="$v.bankParameter.url.$touch()"
-                @blur="$v.bankParameter.url.$touch()"
+                @input="$v.bankParameter.bankUrl.$touch()"
+                @blur="$v.bankParameter.bankUrl.$touch()"
               ></v-text-field>
             </div>
           </div>
@@ -89,6 +108,8 @@
 import { required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { validationMessages } from "@/validationMessages.js";
+
+import { mapActions, mapState } from "vuex";
 //import simplebar from "simplebar-vue";
 
 export default {
@@ -97,11 +118,11 @@ export default {
   validations() {
     return {
       bankParameter: {
-        banka: { required },
-        merchant_number: { required },
-        terminal_no: { required },
-        security_code: { required },
-        url: { required },
+        bankId: { required },
+        merchantNumber: { required },
+        terminalNumber: { required },
+        securityCode: { required },
+        bankUrl: { required },
       },
     };
   },
@@ -119,11 +140,11 @@ export default {
       type: Object,
       default: () => ({
         id: null,
-        banka: "Yapı ve Kredi Bankası",
-        merchant_number: "846543123",
-        terminal_no: "549843",
-        security_code: "furkanilker123123",
-        url: "yahoo.com",
+        bankId: null,
+        merchantNumber: "",
+        terminalNumber: "",
+        securityCode: "",
+        bankUrl: "",
       }),
     },
     processType: {
@@ -131,58 +152,95 @@ export default {
       default: "new",
     },
   },
-  computed: {},
+  computed: {
+    ...mapState("bank", ["bankList"]),
+    ...mapState("auth", ["user"]),
+  },
   data() {
     return {
       dialog: false,
       showPassword: false,
-      bankList: [
-        "Akbank",
-        "Ziraat Bankası",
-        "Finans Bank",
-        "Yapı ve Kredi Bankası",
-        "Şekerbank",
-        "Odea Bank",
-        "HSBC Bank",
-      ],
       bankParameter: {
         id: null,
-        banka: "",
-        merchant_number: "",
-        terminal_no: "",
-        security_code: "",
-        url: "",
+        bankId: null,
+        merchantNumber: "",
+        terminalNumber: "",
+        securityCode: "",
+        bankUrl: "",
       },
     };
   },
   methods: {
+    ...mapActions("bank", ["fetchBankList","bankParameterUpdate","bankParameterAdd"]),
     validationMessages,
     closeDialog() {
       this.dialog = false;
       this.$v.$reset();
     },
-    saveForm() {
+    async setBankList() {
+      await this.fetchBankList({
+        params: {
+          userId: this.user.UserId,
+        },
+      });
+    },
+    async saveForm() {
       this.$v.$touch();
+      if (!this.$v.$invalid) {
+        if (this.processType == "new") {
+          await this.bankParameterAdd({
+            params: {
+              userId: this.user.UserId,
+            },
+            body: {
+              bankId: this.bankParameter.bankId,
+              merchantNumber: this.bankParameter.merchantNumber,
+              terminalNumber: this.bankParameter.terminalNumber,
+              securityCode: this.bankParameter.securityCode,
+              bankUrl: this.bankParameter.bankUrl,
+            },
+            urlSegments: [],
+          });
+        } else {
+          await this.bankParameterUpdate({
+            params: {
+              userId: this.user.UserId,
+            },
+            body: {
+              id: this.bankParameter.id,
+              bankId: this.bankParameter.bankId,
+              merchantNumber: this.bankParameter.merchantNumber,
+              terminalNumber: this.bankParameter.terminalNumber,
+              securityCode: this.bankParameter.securityCode,
+              bankUrl: this.bankParameter.bankUrl,
+            },
+            urlSegments: [],
+          });
+        }
+        this.closeDialog();
+      }
     },
   },
   watch: {
     dialog: function (newVal) {
+      if (newVal) {
+        this.setBankList();
+      }
       this.$emit("dialogChange", newVal);
     },
     showDialog: function (newVal) {
       this.dialog = newVal;
     },
     bankParameterProp: function (newVal) {
-      console.log(newVal);
       newVal
-        ? (this.bankParameter = newVal)
+        ? (this.bankParameter = Object.assign({}, newVal))
         : (this.bankParameter = {
             id: null,
-            banka: "",
-            merchant_number: "",
-            terminal_no: "",
-            security_code: "",
-            url: "",
+            bankId: null,
+            merchantNumber: "",
+            terminalNumber: "",
+            securityCode: "",
+            bankUrl: "",
           });
     },
   },

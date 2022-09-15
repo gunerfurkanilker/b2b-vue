@@ -32,8 +32,8 @@
               clearable
               hide-details
               append-icon="mdi-magnify"
-              @click:append="searchClicked"
-              @keydown.enter="searchClicked"
+              @click:append="false"
+              @keydown.enter="false"
             ></v-text-field>
           </div>
         </div>
@@ -112,9 +112,6 @@ export default {
   },
   methods: {
     ...mapActions("user", ["fetchUserList"]),
-    clickLabel(item) {
-      console.log("Click", item);
-    },
     searchClicked() {
       this.fetchUserList({
         params: {

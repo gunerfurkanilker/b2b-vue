@@ -28,8 +28,8 @@
               clearable
               hide-details
               append-icon="mdi-magnify"
-              @click:append="searchClicked"
-              @keydown.enter="searchClicked"
+              @click:append="false"
+              @keydown.enter="false"
             ></v-text-field>
           </div>
         </div>
@@ -44,6 +44,7 @@
 
       <div class="row">
         <div class="col-lg-12 mb-5">
+
           <v-pagination
             v-model="currentPage"
             circle
@@ -98,12 +99,7 @@ export default {
   },
   methods: {
     ...mapActions("slider", ["fetchSliderList"]),
-    clickLabel(item) {
-      console.log("Click", item);
-    },
-    searchClicked() {
-      console.log("Clicked");
-    },
+ 
     openNewSliderDialog(){
       this.newSliderDialog = true;
     }

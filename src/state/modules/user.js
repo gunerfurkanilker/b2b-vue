@@ -78,13 +78,13 @@ export const mutations = {
     }
   },
   saveUser(state, data) {
-    console.log("HAMILTON", data.hasOwnProperty("id"));
+
     if (data.hasOwnProperty("id")) {
       let user = state.userList.find(e => e.id == data.id)
       let userIndex = state.userList.indexOf(user);
       user = data;
       user.full_name = user.name + " " + user.surname;
-      console.log("USER", user);
+
       Vue.set(state.userList, userIndex, user);
       Swal.fire({
         title: "İşlem Başarılı",
@@ -148,7 +148,7 @@ export const actions = {
         title: 'İşlem Başarısız',
         text: result.data.message,
       });
-    console.log("ADD_RESULT", result);
+
     return result;
   },
 
@@ -190,7 +190,7 @@ export const actions = {
       text: "Yapılan işlem geri alınamayacaktır. İşleme devam etmek istiyor musunuz ?",
     }).then(async function (confirm) {
       if (confirm.isConfirmed) {
-        console.log("PARAMS", params);
+       
         let result = await deleteUser(params, body);
         if (result.data.success)
           showProcessSuccessMessage({
@@ -216,7 +216,7 @@ export const actions = {
             title: 'İşlem Başarısız',
             text: result.data.message,
           });
-        console.log("DELETE_RESULT", result);
+
         return result;
       }
     }
@@ -238,7 +238,7 @@ export const actions = {
         title: 'İşlem Başarısız',
         text: result.data.message,
       });
-    console.log("CHANGE_PASSWORD_RESULT", result);
+
     return result;
   },
 
@@ -246,7 +246,7 @@ export const actions = {
   async fetchUserList(context, { params, body }) {
     context.commit("setUserListLoading", true)
     let result = await getList(params, body);
-    console.log("LIST_RESULT", result);
+
     context.commit("setUserListLoading", false)
     context.commit("setUserList", result.data);
     context.commit('setUserListHeaders', [
@@ -319,7 +319,7 @@ export const actions = {
     context.commit("setRoleGroupListLoading", true);
     let result = await getRoleList(params, body);
     context.commit("setRoleGroupListLoading", false)
-    console.log("ROLE_GRUP_LIST", result);
+
     return result.data.data;
   },
 
@@ -383,39 +383,39 @@ export const actions = {
       }
     ]);
     let result = await getReferanceList(params, body);
-    console.log("REFERANCE_LIST_RESULT", result);
+
     context.commit("setUserReferanceListLoading", false)
-    
+    return result;
   },
 
   async fetchSingleUserReferance(context, { params, body, urlSegments }) {
     context;
     let result = await getSingleReferance(params, body, urlSegments)
-    console.log("SINGLE_REFERANCE_RESULT", result);
+    return result;
   },
 
   async userReferanceAdd(context, { params, body }) {
     context;
     let result = await addUserReferance(params, body)
-    console.log("ADD_USER_REFERANCE_RESULT", result);
+    return result;
   },
 
   async userReferanceUpdate(context, { params, body }) {
     context;
     let result = await updateUserReferance(params, body)
-    console.log("UPDATE_USER_REFERANCE_RESULT", result);
+    return result;
   },
 
   async userReferanceApprove(context, { params, body }) {
     context;
     let result = await approveUserReferance(params, body)
-    console.log("APPROVE_USER_REFERANCE_RESULT", result);
+    return result;
   },
 
   async userReferanceDeny(context, { params, body }) {
     context;
     let result = await denyUserReferance(params, body)
-    console.log("DENY_USER_REFERANCE_RESULT", result);
+    return result;
   },
 
 

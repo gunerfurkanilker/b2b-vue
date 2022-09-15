@@ -7,7 +7,7 @@
   >
     <v-card>
       <v-card-title>
-        {{ processType == "new" ? "Yeni Hesap Oluştur" : "Banka Hesap Düzenle" }}
+        {{ processType == "new" ? "Yeni Taksit Oluştur" : "Taksit Düzenle" }}
         <v-spacer></v-spacer>
         <v-btn @click="closeDialog()" color="danger darken-2" icon>
           <v-icon>mdi-close</v-icon>
@@ -18,30 +18,38 @@
           <div class="row">
             <div class="col-lg-6">
               <v-text-field
-                v-model="bankAccount.taksit"
+                v-model="bankInstallment.number"
                 label="Taksit"
                 type="number"
-                :error-messages="validationMessages($v.bankAccount.taksit, 'Taksit')"
+                min="1"
+                max="48"
+                :error-messages="
+                  validationMessages($v.bankInstallment.number, 'Taksit')
+                "
                 prepend-inner-icon="mdi-numeric"
-                @input="$v.bankAccount.taksit.$touch()"
-                @blur="$v.bankAccount.taksit.$touch()"
+                @input="$v.bankInstallment.number.$touch()"
+                @blur="$v.bankInstallment.number.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-autocomplete
-                v-model="bankAccount.banka"
+                v-model="bankInstallment.bankId"
+                :item-text="(item) => item.name"
+                :item-value="(item) => item.id"
                 label="Banka"
-                :error-messages="validationMessages($v.bankAccount.banka, 'Banka')"
-                @input="$v.bankAccount.banka.$touch()"
-                @blur="$v.bankAccount.banka.$touch()"
+                :error-messages="
+                  validationMessages($v.bankInstallment.bankId, 'Banka')
+                "
+                @input="$v.bankInstallment.bankId.$touch()"
+                @blur="$v.bankInstallment.bankId.$touch()"
                 prepend-inner-icon="mdi-bank"
                 :items="bankList"
               ></v-autocomplete>
             </div>
             <div class="col-lg-6">
               <v-switch
-                v-model="bankAccount.status"
-                :label="bankAccount.status ? 'Aktif' : 'Pasif'"
+                v-model="bankInstallment.isActive"
+                :label="bankInstallment.isActive ? 'Aktif' : 'Pasif'"
               ></v-switch>
             </div>
           </div>
@@ -57,11 +65,11 @@
 </template>
 
 <script>
-import {
-  required
-} from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { validationMessages } from "@/validationMessages.js";
+
+import { mapState, mapActions } from "vuex";
 //import simplebar from "simplebar-vue";
 
 export default {
@@ -69,14 +77,9 @@ export default {
 
   validations() {
     return {
-      bankAccount: {
-        sube: { required },
-        sube_kodu: { required },
-        hesap_no: { required },
-        IBAN: { required },
-        banka: { required },
-        status: { required },
-        taksit: { required }
+      bankInstallment: {
+        number: { required },
+        bankId: { required },
       },
     };
   },
@@ -90,17 +93,12 @@ export default {
       type: Boolean,
       default: false,
     },
-    bankAccountProp: {
+    bankInstallmentProp: {
       type: Object,
       default: () => ({
         id: null,
-        sube: "",
-        sube_kodu: "",
-        hesap_no: "",
-        IBAN: "",
-        banka: "",
-        taksit: 1,
-        status: true,
+        number: 1,
+        isActive: true,
       }),
     },
     processType: {
@@ -108,53 +106,90 @@ export default {
       default: "new",
     },
   },
-  computed: {},
+  computed: {
+    ...mapState("bank", ["bankList"]),
+    ...mapState("auth", ["user"]),
+  },
   data() {
     return {
       dialog: false,
       showPassword: false,
-      bankList: ["Akbank", "Ziraat Bankası", "Finans Bank", "Yapı ve Kredi Bankası", "Şekerbank", "Odea Bank", "HSBC Bank"],
-      bankAccount: {
+      bankInstallment: {
         id: null,
-        sube: "",
-        sube_kodu: "",
-        hesap_no: "",
-        IBAN: "",
-        banka: "",
-        taksit: 1,
-        status: true,
+        number: 1,
+        isActive: true,
       },
     };
   },
   methods: {
+    ...mapActions("bank", ["fetchBankList","bankInstallmentAdd","bankInstallmentUpdate"]),
     validationMessages,
     closeDialog() {
       this.dialog = false;
       this.$v.$reset();
     },
-    saveForm() {
+    async setBankList() {
+      await this.fetchBankList({
+        params: {
+          userId: this.user.UserId,
+        },
+      });
+    },
+    async saveForm() {
       this.$v.$touch();
+      if (!this.$v.$invalid) {
+        if (this.processType == "new") {
+          await this.bankInstallmentAdd({
+            params: {
+              userId: this.user.UserId,
+            },
+            body: {
+              number: this.bankInstallment.number,
+              info: this.bankInstallment.number + " Taksit",
+              bankId: this.bankInstallment.bankId,
+              isActive: this.bankInstallment.isActive,
+            },
+            urlSegments: [],
+          });
+         
+        } else {
+          await this.bankInstallmentUpdate({
+            params: {
+              userId: this.user.UserId,
+            },
+            body: {
+              id: this.bankInstallment.id,
+              number: this.bankInstallment.number,
+              info: this.bankInstallment.number + " Taksit",
+              bankId: this.bankInstallment.bankId,
+              isActive: this.bankInstallment.isActive,
+            },
+            urlSegments: [],
+          });
+       
+        }
+        this.closeDialog();
+      }
     },
   },
   watch: {
     dialog: function (newVal) {
+      if (newVal) {
+        this.setBankList();
+      }
       this.$emit("dialogChange", newVal);
     },
     showDialog: function (newVal) {
       this.dialog = newVal;
     },
-    bankAccountProp: function (newVal) {
-      console.log(newVal);
-      newVal ? this.bankAccount = newVal : this.bankAccount = {
-        id: null,
-        sube: "",
-        sube_kodu: "",
-        hesap_no: "",
-        IBAN: "",
-        banka: "",
-        taksit: 1,
-        status: true,
-      };
+    bankInstallmentProp: function (newVal) {
+      newVal
+        ? (this.bankInstallment = Object.assign({},newVal))
+        : (this.bankInstallment = {
+            id: null,
+            number: 1,
+            isActive: true,
+          });
     },
   },
 };

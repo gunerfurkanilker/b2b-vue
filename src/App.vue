@@ -3,6 +3,8 @@ import appConfig from "@/app.config";
 
 import { notificationMethods } from "@/state/helpers";
 
+import { mapState } from "vuex";
+
 export default {
   name: "app",
   page: {
@@ -11,6 +13,9 @@ export default {
       title = typeof title === "function" ? title(this.$store) : title;
       return title ? `${title} | ${appConfig.title}` : appConfig.title;
     },
+  },
+  computed:{
+    ...mapState("process",["processLoading"])
   },
   mounted() {
     // document.querySelector("html").setAttribute('dir', 'rtl')
@@ -34,5 +39,11 @@ export default {
 <template>
   <div id="app">
     <RouterView />
+    <v-overlay :value="processLoading" opacity="1" z-index="999999">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
   </div>
 </template>

@@ -220,7 +220,7 @@
         </div>
         <div class="row">
           <div class="col-md-12 text-end">
-            <v-btn color="success darken-2" depressed @click="saveErpSettings()" :loading="requestPending"
+            <v-btn color="success darken-2" depressed @click="saveErpSettings()" 
               ><v-icon left>mdi-content-save</v-icon>Kaydet</v-btn
             >
           </div>
@@ -249,21 +249,20 @@ export default {
     ...mapState("auth",["user"])
   },
   mounted(){
-    this.erpSettingsObject = Object.assign({},this.erpSettings )
+    
   },
   data(){
     return {
       erpSettingsObject:{},
-      requestPending: false
+
     }
   },
   methods:{
     ...mapActions("settings",["erpSettingUpdate"]),
     async saveErpSettings(){
-      console.log("USER",this.user.UserId);
-      console.log("REQ_BODY",this.erpSettingsObject);
-      this.requestPending = true;
-      let result = await this.erpSettingUpdate({
+  
+     
+      await this.erpSettingUpdate({
         params: {
           userId: this.user.UserId
         },
@@ -303,10 +302,13 @@ export default {
           "StockListOrderBy": this.erpSettingsObject.stockListOrderBy
         }
       })
-      this.requestPending = false;
-      console.log("ERP_SETTINGS_UPDATE",result);
     }
   },
+  watch:{
+    "settingsProp" : function(newVal) {
+      this.erpSettingsObject = Object.assign({},newVal )
+    }
+  }
 }
 
 </script>

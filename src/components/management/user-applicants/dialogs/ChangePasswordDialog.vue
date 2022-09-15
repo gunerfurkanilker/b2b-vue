@@ -102,7 +102,6 @@ export default {
     },
     saveForm(){
       this.$v.$touch();
-      console.log(this.$v.$invalid);
     }
   },
   watch: {
@@ -113,7 +112,7 @@ export default {
       this.dialog = newVal;
     },
     userProp: function (newVal) {
-      console.log(newVal)
+
       this.user = newVal;
     }
   },

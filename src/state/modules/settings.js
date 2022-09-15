@@ -34,10 +34,9 @@ export const state = {
   
   export const actions = {
     async fetchSettings(context, { params, body }) {
-        context;
-        context.commit("setSettingsLoading",true);
+      
       let result = await getSettings(params,body);
-      context.commit("setSettingsLoading",false);
+      
       if(result.data.success)
       {
         let resultObject = result.data.data;
@@ -114,7 +113,6 @@ export const state = {
     async erpSettingUpdate(context, { params, body }) {
         context;
         let result = await updateErpSettings(params, body);
-        console.log("ERP_SETTINGS_UPDATE_RESULT",result)
         if(result.data.success)
           showProcessSuccessMessage({
             title: 'İşlem Başarılı',
@@ -131,7 +129,7 @@ export const state = {
     async generalSettingsUpdate(context, { params, body }) {
         context;
         let result = await updateGeneralSettings(params, body);
-        console.log("GENERAL_SETTINGS_UPDATE_RESULT",result)
+
         if(result.data.success)
           showProcessSuccessMessage({
             title: 'İşlem Başarılı',
@@ -148,7 +146,7 @@ export const state = {
     async mailSettingsUpdate(context, { params, body }) {
       context;
       let result = await updateMailSettings(params, body);
-      console.log("MAIL_SETTINGS_UPDATE_RESULT",result)
+
       if(result.data.success)
         showProcessSuccessMessage({
           title: 'İşlem Başarılı',

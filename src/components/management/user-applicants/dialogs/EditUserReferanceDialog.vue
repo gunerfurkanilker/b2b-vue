@@ -75,8 +75,8 @@
             <div class="col-lg-6">
               <v-text-field
                 v-model="editReferance.referanceIpAddress"
-                label="Cari Kod"
-                prepend-inner-icon="mdi-cog"
+                label="IP Adres"
+                prepend-inner-icon="mdi-ip"
               ></v-text-field>
             </div>
             
@@ -185,7 +185,6 @@ export default {
     },
     async saveForm() {
       this.$v.$touch();
-      console.log("IS INVALID", this.$v.$invalid);
       if (!this.$v.$invalid) {
         this.pendingRequest = true;
         let requestBody = {
@@ -202,7 +201,6 @@ export default {
           let result = await this.userReferanceAdd({
             body:requestBody
           })
-          console.log("ADD_RESULT",result)
           if(result.data.success)
           {
             this.dialog = false;

@@ -9,42 +9,16 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-lg-12 d-flex flex-wrap justify-content-between">
-        <div>
-          <p class="text-center">Gösterilen Kayıt Sayısı</p>
-          <v-btn-toggle mandatory rounded dense>
-            <v-btn @click="perPage = 10"> 10 </v-btn>
-            <v-btn @click="perPage = 20"> 20 </v-btn>
-            <v-btn @click="perPage = 30"> 30 </v-btn>
-            <v-btn @click="perPage = 40"> 50 </v-btn>
-            <v-btn @click="perPage = 50"> 100 </v-btn>
-          </v-btn-toggle>
-        </div>
-        <div class="ms-auto">
-          <v-text-field
-            class="mt-5 pt-3"
-            outlined
-            rounded
-            dense
-            placeholder="Arama Yapın..."
-            clearable
-            hide-details
-            append-icon="mdi-magnify"
-          ></v-text-field>
-        </div>
-      </div>
-    </div>
-    <div class="row">
       <div class="col-md-12">
         <b-table
-          :items="bankList"
-          :fields="bankListHeaders"
+          :items="bankAccountList"
+          :fields="bankAccountListHeaders"
           hover
           responsive
           sort-icon-left
           :per-page="perPage"
           :current-page="currentPage"
-          :busy="bankListLoading"
+          :busy="bankAccountListLoading"
         >
           <template #table-busy>
             <div class="text-center">
@@ -55,6 +29,14 @@
               ></b-spinner>
             </div>
           </template>
+          <template #cell(bank)="data">
+            {{ data.item.bank ? data.item.bank.name : '' }}
+          </template>
+          <template #cell(isActive)="data">
+          <v-chip small label :color="data.item.isActive ? 'success ligthen-2' : 'secondary ligthen-2'">
+            {{ data.item.isActive ? 'Aktif' : 'Pasif' }}
+          </v-chip>
+        </template>
           <template #cell(process)="data">
             <div class="text-center">
               <v-tooltip top>
@@ -66,15 +48,20 @@
                     color="amber darken-2"
                     @click="openBankAccountDialog('edit',data.item)"
                   >
-                    <v-icon>mdi-pencil</v-icon>
+                    <v-icon>mdi-pencil-outline</v-icon>
                   </v-btn>
                 </template>
                 <span>Düzenle</span>
               </v-tooltip>
               <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2">
-                    <v-icon>mdi-delete</v-icon>
+                  <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" @click="bankAccountDelete({
+                    params:{
+                      bankAccountId: data.item.id
+                    },
+                    body:{}
+                  })">
+                    <v-icon>mdi-delete-outline</v-icon>
                   </v-btn>
                 </template>
                 <span>Sil</span>
@@ -91,10 +78,10 @@
           circle
           class="my-4"
           :length="
-            this.bankList.length % this.perPage == 0 &&
-            this.bankList.length > this.perPage
-              ? this.bankList.length / this.perPage
-              : parseInt(this.bankList.length / this.perPage) + 1
+            this.bankAccountList.length % this.perPage == 0 &&
+            this.bankAccountList.length > this.perPage
+              ? this.bankAccountList.length / this.perPage
+              : parseInt(this.bankAccountList.length / this.perPage) + 1
           "
           :total-visible="5"
         ></v-pagination>
@@ -120,10 +107,18 @@ export default {
   },
 
   computed: {
-    ...mapState("bank", ["bankList", "bankListHeaders", "bankListLoading"]),
+    ...mapState("bank", ["bankAccountList", "bankAccountListHeaders", "bankAccountListLoading"]),
+    ...mapState("auth", ["user"]),
   },
   mounted() {
-    this.fetchBankList()
+    this.fetchBankAccountList({
+      params:{
+        userId: this.user.UserId
+      },
+      body:{
+
+      },
+    })
   },
   data() {
     return {
@@ -135,7 +130,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("bank",["fetchBankList"]),
+    ...mapActions("bank",["fetchBankAccountList","bankAccountDelete"]),
     openBankAccountDialog(processType,data = null) {
       this.bankAccount = data;
       this.processType = processType;

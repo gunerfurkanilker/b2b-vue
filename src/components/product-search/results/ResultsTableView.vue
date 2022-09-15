@@ -196,7 +196,6 @@ export default {
       "changeQuantityOfProduct",
     ]),
     addToCart(product) {
-      console.log("Test",this.current);
       if (!this.current) {
         Swal.fire({
           title: "Ürün Ekleme Başarısız",

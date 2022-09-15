@@ -368,9 +368,7 @@ export default {
     };
   },
   methods: {
-    clickLabel(item) {
-      console.log("Click", item);
-    },
+    
   },
 };
 </script>

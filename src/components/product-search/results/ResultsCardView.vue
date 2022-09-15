@@ -530,9 +530,6 @@ export default {
       this.stokOzellikDialogData = data;
       this.stokOzellikDialog = true;
     },
-    clickLabel(item) {
-      console.log("Click", item);
-    },
     expandImage(images) {
       this.$viewerApi({
         images: images,

@@ -154,7 +154,7 @@ export default {
     },
     saveForm() {
       this.$v.$touch();
-      console.log(this.$v);
+
     },
   },
   watch: {

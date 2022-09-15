@@ -29,7 +29,7 @@ async function getSingle(params, body, urlSegments) {
     url: setParamsToURL(USER_API_URL_LIST.SINGLE_USER_URL,params,urlSegments),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request,true);
 }
 
 async function getRoleGroupList(params, body) {
@@ -57,7 +57,7 @@ async function addUser(params,body){
     url: setParamsToURL(USER_API_URL_LIST.ADD_USER_URL,params),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request,true);
 }
 
 async function updateUser(params,body){
@@ -71,7 +71,7 @@ async function updateUser(params,body){
     url: setParamsToURL(USER_API_URL_LIST.UPDATE_USER_URL,params),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request,true);
 }
 
 
@@ -86,7 +86,7 @@ async function deleteUser(params,body){
     url: setParamsToURL(USER_API_URL_LIST.DELETE_USER_URL,params),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request,true);
 }
 
 
@@ -101,7 +101,7 @@ async function changePasswordUser(params,body){
     url: setParamsToURL(USER_API_URL_LIST.CHANGE_USER_PASSWORD_URL,params),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request,true);
 }
 
 
@@ -145,7 +145,7 @@ async function getSingleReferance(params, body) {
     url: setParamsToURL(USER_API_URL_LIST.REFERANCE_SINGLE_URL,params),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request,true);
 }
 
 async function approveUserReferance(params,body){
@@ -160,7 +160,7 @@ async function approveUserReferance(params,body){
     url: setParamsToURL(USER_API_URL_LIST.REFERANCE_APPROVE_URL,params),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request,true);
 
 }
 
@@ -176,7 +176,7 @@ async function denyUserReferance(params,body){
     url: setParamsToURL(USER_API_URL_LIST.REFERANCE_DENY_URL,params),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request,true);
 
 }
 
@@ -192,7 +192,7 @@ async function addUserReferance(params,body){
     url: setParamsToURL(USER_API_URL_LIST.REFERANCE_ADD_URL,params),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request,true);
 
 }
 
@@ -208,7 +208,7 @@ async function updateUserReferance(params,body){
     url: setParamsToURL(USER_API_URL_LIST.REFERANCE_UPDATE_URL,params),
     post: body
   }
-  return prepareRequest(config,request);
+  return prepareRequest(config,request,true);
 
 }
 

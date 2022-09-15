@@ -93,7 +93,6 @@ export default {
       this.$v.$touch();
       if(!this.$v.$invalid)
       {
-        console.log("VETTEL",this.user);
         await this.userPasswordChange({
           params: {
             userId : this.user.id

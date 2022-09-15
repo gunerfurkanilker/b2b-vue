@@ -167,7 +167,7 @@
               color="success darken-2"
               depressed
               @click="saveGeneralSettings()"
-              :loading="requestPending"
+              
               ><v-icon left>mdi-content-save</v-icon>Kaydet</v-btn
             >
           </div>
@@ -198,13 +198,13 @@ export default {
   data() {
     return {
       generalSettingsObject: {},
-      requestPending: false
+     
     };
   },
   methods: {
     ...mapActions("settings", ["generalSettingsUpdate"]),
     async saveGeneralSettings() {
-      this.requestPending = true;
+      
       let result = await this.generalSettingsUpdate({
         params: {
           userId: this.user.UserId,
@@ -227,8 +227,12 @@ export default {
         },
       });
       result;
-      this.requestPending = false;
     },
   },
+  watch:{
+    "settingsProp" : function(newVal) {
+      this.generalSettingsObject = Object.assign({},newVal )
+    }
+  }
 };
 </script>

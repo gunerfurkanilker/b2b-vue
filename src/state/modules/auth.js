@@ -3,6 +3,7 @@ import { login } from "../../services/modules/login.js";
 import { showProcessErrorMessage } from "../alertHelpers";
 import jwt_decode from "jwt-decode";
 
+
 export const state = {
     user: null,
     token: null,
@@ -33,9 +34,7 @@ export const getters = {
 export const actions = {
    
     async tryLogin( context ,{username, password} ) {
-        context.commit("setLoginLoadingStatus",true);
         let response = await login(username,password);
-        context.commit("setLoginLoadingStatus",false);
         if(response.error)
             showProcessErrorMessage({
                 title: 'Giriş Yapılamadı',

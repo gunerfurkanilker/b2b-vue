@@ -213,8 +213,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text color="secondary" @click="closeDialog()" :loading="pendingRequest">İptal</v-btn>
-        <v-btn text color="success" @click="saveForm" :loading="pendingRequest">Kaydet</v-btn>
+        <v-btn text color="secondary" @click="closeDialog()">İptal</v-btn>
+        <v-btn text color="success" @click="saveForm">Kaydet</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -336,7 +336,6 @@ export default {
         roleGroup: null,
         role: null,
       },
-      pendingRequest: false
     };
   },
   methods: {
@@ -361,9 +360,8 @@ export default {
     },
     async saveForm() {
       this.$v.$touch();
-      console.log("IS INVALID", this.$v.$invalid);
       if (!this.$v.$invalid) {
-        this.pendingRequest = true;
+        
         let requestBody = {
           FirstName: this.editUser.firstName,
           LastName: this.editUser.lastName,
@@ -384,7 +382,6 @@ export default {
           let result = await this.userAdd({
             body:requestBody
           })
-          console.log("ADD_RESULT",result)
           if(result.data.success)
           {
             this.dialog = false;
@@ -404,7 +401,7 @@ export default {
           
             
         }
-        this.pendingRequest = false;    
+       
       }
     },
     async getRoleGroupList() {

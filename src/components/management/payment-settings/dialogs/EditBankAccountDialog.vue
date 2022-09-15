@@ -7,7 +7,9 @@
   >
     <v-card>
       <v-card-title>
-        {{ processType == "new" ? "Yeni Hesap Oluştur" : "Banka Hesap Düzenle" }}
+        {{
+          processType == "new" ? "Yeni Banka Hesabı Oluştur" : "Banka Hesap Düzenle"
+        }}
         <v-spacer></v-spacer>
         <v-btn @click="closeDialog()" color="danger darken-2" icon>
           <v-icon>mdi-close</v-icon>
@@ -18,59 +20,73 @@
           <div class="row">
             <div class="col-lg-6">
               <v-text-field
-                v-model="bankAccount.sube"
+                v-model="bankAccount.branch"
                 label="Şube"
-                :error-messages="validationMessages($v.bankAccount.sube, 'Şube')"
+                :error-messages="
+                  validationMessages($v.bankAccount.branch, 'Şube')
+                "
                 prepend-inner-icon="mdi-office-building"
-                @input="$v.bankAccount.sube.$touch()"
-                @blur="$v.bankAccount.sube.$touch()"
+                @input="$v.bankAccount.branch.$touch()"
+                @blur="$v.bankAccount.branch.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="bankAccount.sube_kodu"
+                v-model="bankAccount.branchCode"
                 label="Şube Kodu"
-                :error-messages="validationMessages($v.bankAccount.sube_kodu, 'Şube Kodu')"
+                :error-messages="
+                  validationMessages($v.bankAccount.branchCode, 'Şube Kodu')
+                "
                 prepend-inner-icon="mdi-bank-transfer-in"
-                @input="$v.bankAccount.name.$touch()"
-                @blur="$v.bankAccount.name.$touch()"
+                @input="$v.bankAccount.branchCode.$touch()"
+                @blur="$v.bankAccount.branchCode.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="bankAccount.hesap_no"
+                v-model="bankAccount.accountNumber"
                 label="Hesap No"
-                :error-messages="validationMessages($v.bankAccount.hesap_no, 'Hesap No')"
+                :error-messages="
+                  validationMessages($v.bankAccount.accountNumber, 'Hesap No')
+                "
                 prepend-inner-icon="mdi-numeric"
-                @input="$v.bankAccount.hesap_no.$touch()"
-                @blur="$v.bankAccount.hesap_no.$touch()"
+                @input="$v.bankAccount.accountNumber.$touch()"
+                @blur="$v.bankAccount.accountNumber.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="bankAccount.IBAN"
+                v-model="bankAccount.iban"
                 label="IBAN"
-                :error-messages="validationMessages($v.bankAccount.IBAN, 'IBAN')"
+                :error-messages="
+                  validationMessages($v.bankAccount.iban, 'IBAN')
+                "
                 prepend-inner-icon="mdi-credit-card"
-                @input="$v.bankAccount.IBAN.$touch()"
-                @blur="$v.bankAccount.IBAN.$touch()"
+                @input="$v.bankAccount.iban.$touch()"
+                @blur="$v.bankAccount.iban.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-autocomplete
-                v-model="bankAccount.banka"
+                v-model="bankAccount.bankId"
+                :item-text="(item) => item.name"
+                :item-value="(item) => item.id"
                 label="Banka"
-                :error-messages="validationMessages($v.bankAccount.banka, 'Banka')"
-                @input="$v.bankAccount.banka.$touch()"
-                @blur="$v.bankAccount.banka.$touch()"
+                :error-messages="
+                  validationMessages($v.bankAccount.bankId, 'Banka')
+                "
+                @input="$v.bankAccount.bankId.$touch()"
+                @blur="$v.bankAccount.bankId.$touch()"
                 prepend-inner-icon="mdi-bank"
                 :items="bankList"
               ></v-autocomplete>
             </div>
             <div class="col-lg-6">
               <v-switch
-                v-model="bankAccount.status"
-                :label="bankAccount.status ? 'Aktif' : 'Pasif'"
+                v-model="bankAccount.isActive"
+                :label="bankAccount.isActive ? 'Aktif' : 'Pasif'"
+                dense
+                inset
               ></v-switch>
             </div>
           </div>
@@ -86,12 +102,12 @@
 </template>
 
 <script>
-import {
-  required
-} from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { validationMessages } from "@/validationMessages.js";
 //import simplebar from "simplebar-vue";
+
+import { mapState, mapActions } from "vuex";
 
 export default {
   mixins: [validationMixin],
@@ -99,12 +115,11 @@ export default {
   validations() {
     return {
       bankAccount: {
-        sube: { required },
-        sube_kodu: { required },
-        hesap_no: { required },
-        IBAN: { required },
-        banka: { required },
-        status: { required }
+        branch: { required },
+        branchCode: { required },
+        accountNumber: { required },
+        iban: { required },
+        bankId: { required },
       },
     };
   },
@@ -135,51 +150,119 @@ export default {
       default: "new",
     },
   },
-  computed: {},
+  computed: {
+    ...mapState("bank", ["bankList"]),
+    ...mapState("auth", ["user"]),
+  },
   data() {
     return {
       dialog: false,
       showPassword: false,
-      bankList: ["Akbank", "Ziraat Bankası", "Finans Bank", "Yapı ve Kredi Bankası", "Şekerbank", "Odea Bank", "HSBC Bank"],
       bankAccount: {
         id: null,
-        sube: "",
-        sube_kodu: "",
-        hesap_no: "",
-        IBAN: "",
-        banka: "",
-        status: true,
+        branch: "",
+        branchCode: "",
+        accountNumber: "",
+        iban: "",
+        bankId: "",
+        isActive: true,
       },
     };
   },
   methods: {
+    ...mapActions("bank", [
+      "fetchBankList",
+      "bankAccountAdd",
+      "bankAccountUpdate",
+      "fetchSingleBankAccount"
+    ]),
     validationMessages,
     closeDialog() {
       this.dialog = false;
       this.$v.$reset();
     },
-    saveForm() {
+    async saveForm() {
       this.$v.$touch();
+      if (!this.$v.$invalid) {
+        if (this.processType == "new") {
+          await this.bankAccountAdd({
+            params: {
+              userId: this.user.UserId,
+            },
+            body: {
+              bankId: this.bankAccount.bankId,
+              branch: this.bankAccount.branch,
+              branchCode: this.bankAccount.branchCode,
+              accountNumber: this.bankAccount.accountNumber,
+              iban: this.bankAccount.iban,
+              isActive: this.bankAccount.isActive,
+            },
+            urlSegments: [],
+          });
+      
+        } else {
+          await this.bankAccountUpdate({
+            params: {
+              userId: this.user.UserId,
+            },
+            body: {
+              id: this.bankAccount.id,
+              bankId: this.bankAccount.bankId,
+              branch: this.bankAccount.branch,
+              branchCode: this.bankAccount.branchCode,
+              accountNumber: this.bankAccount.accountNumber,
+              iban: this.bankAccount.iban,
+              isActive: this.bankAccount.isActive,
+            },
+            urlSegments: [],
+          });
+        
+        }
+        this.closeDialog();
+      }
     },
+    async setBankList() {
+      await this.fetchBankList({
+        params: {
+          userId: this.user.UserId,
+        },
+        body: {},
+      });
+    },
+    async getSingleBankAccount(bankAccountObject) {
+      this.bankAccount = await this.fetchSingleBankAccount({
+        params: {
+          bankAccountId: bankAccountObject.id
+        },
+        body: {
+
+        }
+      })  
+    }
   },
   watch: {
     dialog: function (newVal) {
+      if (newVal) {
+        this.setBankList();
+      }
       this.$emit("dialogChange", newVal);
     },
     showDialog: function (newVal) {
       this.dialog = newVal;
     },
     bankAccountProp: function (newVal) {
-      console.log(newVal);
-      newVal ? this.bankAccount = newVal : this.bankAccount = {
-        id: null,
-        sube: "",
-        sube_kodu: "",
-        hesap_no: "",
-        IBAN: "",
-        banka: "",
-        status: true,
-      };
+    
+      newVal
+        ? (this.bankAccount = Object.assign({},newVal))
+        : (this.bankAccount = {
+            id: null,
+            branch: "",
+            branchCode: "",
+            accountNumber: "",
+            iban: "",
+            bankId: "",
+            isActive: true,
+          });
     },
   },
 };

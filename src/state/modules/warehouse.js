@@ -33,7 +33,6 @@ export const state = {
       let result = await getList(params,body);
       return result.data.data;
       /*context.commit("setWarehouseList",result.data.data);
-      console.log("WarehouseResult", result);
         context.commit("setWarehouseListLoading", false)
       context.commit('setWarehouseListHeaders', [
         {

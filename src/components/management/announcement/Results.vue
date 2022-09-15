@@ -7,32 +7,6 @@
             ><v-icon small left>mdi-bullhorn</v-icon> Duyuru Ekle</v-btn
           >
         </div>
-        <div class="col-lg-12 d-flex flex-wrap">
-          <div>
-            <p class="text-center">Gösterilen Kayıt Sayısı</p>
-            <v-btn-toggle mandatory rounded dense>
-              <v-btn @click="perPage = 10"> 10 </v-btn>
-              <v-btn @click="perPage = 20"> 20 </v-btn>
-              <v-btn @click="perPage = 30"> 30 </v-btn>
-              <v-btn @click="perPage = 40"> 50 </v-btn>
-              <v-btn @click="perPage = 50"> 100 </v-btn>
-            </v-btn-toggle>
-          </div>
-          <div class="ms-auto">
-            <v-text-field
-              class="mt-5 pt-3"
-              outlined
-              rounded
-              dense
-              placeholder="Arama Yapın..."
-              clearable
-              hide-details
-              append-icon="mdi-magnify"
-              @click:append="searchClicked"
-              @keydown.enter="searchClicked"
-            ></v-text-field>
-          </div>
-        </div>
       </div>
       <div class="row">
         <ResultTableView
@@ -82,10 +56,17 @@ export default {
     EditAnnouncementDialog,
   },
   created() {
-    this.fetchAnnouncementList();
+    this.fetchAnnouncementList({
+      params:{
+        userId: this.user.UserId
+      },
+      body:{},
+      
+    });
   },
   computed: {
     ...mapState("announcement", ["announcementList"]),
+    ...mapState("auth", ["user"]),
   },
   data() {
     return {
@@ -98,12 +79,6 @@ export default {
   },
   methods: {
     ...mapActions("announcement", ["fetchAnnouncementList"]),
-    clickLabel(item) {
-      console.log("Click", item);
-    },
-    searchClicked() {
-      console.log("Clicked");
-    },
     openNewAnnouncementDialog(){
       this.newAnnouncementDialog = true;
     }

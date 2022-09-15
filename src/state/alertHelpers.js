@@ -32,4 +32,20 @@ function showProcessPromptMessage(swalObject){
     return swalInstance;
 }
 
-export { showProcessErrorMessage, showProcessSuccessMessage, showProcessPromptMessage };
+function showResultPopup(result,title = 'İşlem Başarılı',message = ""){
+  if(result.data.status)
+  {
+    showProcessSuccessMessage({
+      title: title,
+      text: result.data.message ? result.data.message : message
+    })
+  }
+  else if(result.data.status){
+    showProcessErrorMessage({
+      title: title,
+      text: result.data.message ? result.data.message : message
+    })
+  }
+}
+
+export { showProcessErrorMessage, showProcessSuccessMessage, showProcessPromptMessage, showResultPopup };

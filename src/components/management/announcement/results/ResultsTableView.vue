@@ -31,15 +31,19 @@
                   color="amber darken-2"
                   @click="openAnnouncementDialog(data.item)"
                 >
-                  <v-icon>mdi-pencil</v-icon>
+                  <v-icon>mdi-pencil-outline</v-icon>
                 </v-btn>
               </template>
               <span>Düzenle</span>
             </v-tooltip>
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" >
-                  <v-icon>mdi-delete</v-icon>
+                <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" @click="announcementDelete({
+                  params:{
+                    announcementId : data.item.id
+                  }
+                })">
+                  <v-icon>mdi-delete-outline</v-icon>
                 </v-btn>
               </template>
               <span>Sil</span>
@@ -59,7 +63,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 import EditAnnouncementDialog from '@/components/management/announcement/dialogs/EditAnnouncementDialog.vue'
 
@@ -94,7 +98,8 @@ export default {
     };
   },
   methods: {
-    openAnnouncementDialog(data){
+    ...mapActions("announcement",["announcementDelete"]),
+    async openAnnouncementDialog(data){
       this.announcement = data;
       this.editAnnouncementDialog = true;
     }
