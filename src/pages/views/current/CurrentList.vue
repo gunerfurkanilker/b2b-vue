@@ -31,6 +31,7 @@ export default {
     
     return {
       currentPage: 1,
+      
       breadcrumbArray: [
         {
           text: "Cari",
