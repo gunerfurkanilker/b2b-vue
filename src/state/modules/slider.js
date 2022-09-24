@@ -1,110 +1,172 @@
 //import Swal from "sweetalert2";
 //import Vue from "vue";
 
+import { getList, addSlider, deleteSlider, updateSlider } from "../../services/modules/slider/sliderService";
+import { showProcessErrorMessage, showProcessPromptMessage, showProcessSuccessMessage } from "../alertHelpers";
+import store from "../store";
+
 export const state = {
-    sliderList: [],
-    sliderListHeaders: [],
-    sliderListLoading: false,
-  
-  };
-  
-  export const mutations = {
-    setSliderList(state, data) {
-      state.sliderList = data;
-    },
-    setSliderListHeaders(state, data) {
-      state.sliderListHeaders = data;
-    },
-    setSliderListLoading(state, data) {
-      state.sliderListLoading = data;
-    }
+  sliderList: [],
+  sliderListHeaders: [],
+  sliderListLoading: false,
+
+};
+
+export const mutations = {
+  setSliderList(state, data) {
+    state.sliderList = data;
+  },
+  setSliderListHeaders(state, data) {
+    state.sliderListHeaders = data;
+  },
+  setSliderListLoading(state, data) {
+    state.sliderListLoading = data;
   }
-  
-  export const getters = {
-    
-  };
-  
-  export const actions = {
-    fetchSliderList(context) {
-      context.commit("setSliderListLoading", true)
-      setTimeout(function () {
-        context.commit('setSliderList', [
-          {
-            id: 1,
-            image: require('@/assets/images/product/img-6.png'),
-            title: "Triger Seti",
-            content: "Triger Seti Açıklama",
-            order: "1",
-            start_date: "2022-07-14",
-            status: true
-          },
-          {
-            id: 2,
-            image: require('@/assets/images/product/img-8.png'),
-            title: "Baskı Balata",
-            content: "Baskı Balata Açıklama",
-            order: "2",
-            start_date: "2022-07-20",
-            status: true
-          },
-          {
-            id: 3,
-            image: require('@/assets/images/product/img-2.png'),
-            title: "Volant Diski",
-            content: "Volant diski açıklama",
-            order: "3",
-            start_date: "2022-07-25",
-            status: false
-          }
-        ]);
-        context.commit('setSliderListHeaders', [
-          {
-            key: 'image',
-            label: 'Resim',
-            sortable: false,
-  
-          },
-          {
-            key: 'title',
-            label: 'Başlık',
-            sortable: false,
-  
-          },
-          {
-            key: 'content',
-            label: 'Yazı',
-            sortable: true,
-  
-          },
-          {
-            key: 'order',
-            label: 'Sıra',
-            sortable: true,
-  
-          },
-          {
-            key: 'start_date',
-            label: 'Başlangıç Tarihi',
-            sortable: true,
-  
-          },
-          {
-            key: 'status',
-            label: 'Durum',
-            sortable: false,
-            class: "text-center"
-  
-          },
-          {
-            key: 'process',
-            label: 'İşlem',
-            sortable: false,
-            class: "text-center"
-  
-          }
-        ]);
-        context.commit("setSliderListLoading", false)
-      }, 2000)
+}
+
+export const getters = {
+
+};
+
+export const actions = {
+  async fetchSliderList(context, { params, body }) {
+    context.commit("setSliderListLoading", true)
+    let result = await getList(params, body)
+    console.log("SLIDER_LIST_RESULT", result);
+    context.commit("setSliderList", result.data.data);
+    context.commit('setSliderListHeaders', [
+      {
+        key: 'image',
+        label: 'Resim',
+        sortable: false,
+
+      },
+      {
+        key: 'title',
+        label: 'Başlık',
+        sortable: false,
+
+      },
+      {
+        key: 'text',
+        label: 'Yazı',
+        sortable: true,
+
+      },
+      {
+        key: 'sequence',
+        label: 'Sıra',
+        sortable: true,
+
+      },
+      {
+        key: 'startDate',
+        label: 'Başlangıç Tarihi',
+        sortable: true,
+
+      },
+      {
+        key: 'isActive',
+        label: 'Durum',
+        sortable: false,
+        class: "text-center"
+
+      },
+      {
+        key: 'process',
+        label: 'İşlem',
+        sortable: false,
+        class: "text-center"
+
+      }
+    ]);
+    context.commit("setSliderListLoading", false)
+    if (result.data.success) {
+      return result.data.data;
     }
-  };
-  
+    else
+      return false;
+  },
+
+  async sliderAdd(context, { params, body }) {
+    context;
+    let result = await addSlider(params, body)
+    if (result.data.success) {
+      showProcessSuccessMessage({
+        title: 'İşlem Başarılı',
+        text: result.data.message
+      })
+      context.dispatch("fetchSliderList", {
+        params: {
+          userId: store.state.auth.user.UserId
+        },
+        body: {}
+      })
+    }
+
+    else
+      showProcessErrorMessage({
+        title: 'İşlem Başarısız',
+        text: result.data.message
+      })
+    return result;
+  },
+
+  async sliderUpdate(context, { params, body }) {
+    context;
+    let result = await updateSlider(params, body)
+
+    if (result.data.success) {
+      showProcessSuccessMessage({
+        title: 'İşlem Başarılı',
+        text: result.data.message
+      })
+      context.dispatch("fetchSliderList", {
+        params: {
+          userId: store.state.auth.user.UserId
+        },
+        body: {}
+      })
+    }
+    else
+      showProcessErrorMessage({
+        title: 'İşlem Başarısız',
+        text: result.data.message
+      })
+    return result;
+  },
+
+  async sliderDelete(context, { params, body, urlSegments }) {
+    context;
+    showProcessPromptMessage({
+      title: 'Slider Silinecek',
+      text: "Yapılan işlem geri alınamayacaktır. İşleme devam etmek istiyor musunuz ?",
+    }).then(async function (confirm) {
+      if (confirm.isConfirmed) {
+
+        let result = await deleteSlider(params, body, urlSegments);
+        if (result.data.success) {
+          showProcessSuccessMessage({
+            title: 'İşlem Başarılı',
+            text: result.data.message
+          })
+          context.dispatch("fetchSliderList", {
+            params: {
+              userId: store.state.auth.user.UserId
+            },
+            body: {}
+          })
+        }
+        else
+          showProcessErrorMessage({
+            title: 'İşlem Başarısız',
+            text: result.data.message
+          })
+
+        return result;
+      }
+    }
+    )
+  },
+
+};

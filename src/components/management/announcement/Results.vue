@@ -15,23 +15,6 @@
         ></ResultTableView>
       </div>
       <!-- end row -->
-
-      <div class="row">
-        <div class="col-lg-12 mb-5">
-          <v-pagination
-            v-model="currentPage"
-            circle
-            class="my-4"
-            :length="
-              this.announcementList.length % this.perPage == 0 &&
-              this.announcementList.length > this.perPage
-                ? this.announcementList.length / this.perPage
-                : parseInt(this.announcementList.length / this.perPage) + 1
-            "
-            :total-visible="5"
-          ></v-pagination>
-        </div>
-      </div>
     </div>
 
     <EditAnnouncementDialog

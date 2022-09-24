@@ -6,8 +6,6 @@
         hover
         responsive
         sort-icon-left
-        :per-page="perPage"
-        :current-page="currentPage"
         :busy="sliderListLoading"
       >
         <template #table-busy>
@@ -27,8 +25,11 @@
             @click="expandImage(data.item.image)"
           />
         </template>
-        <template #cell(status)="data">
-          <v-chip label small :color="data.item.status ? 'success ligthen-2' : 'secondary ligthen-2'">{{ data.item.status ? 'Aktif' : 'Pasif' }}</v-chip>
+        <template #cell(startDate)="data">
+          {{ formattedDate(data.item.startDate) }}
+        </template>
+        <template #cell(isActive)="data">
+          <v-chip label small :color="data.item.isActive ? 'success ligthen-2' : 'secondary ligthen-2'">{{ data.item.isActive ? 'Aktif' : 'Pasif' }}</v-chip>
         </template>
         <template #cell(process)="data">
           <div class="text-center">
@@ -41,15 +42,17 @@
                   color="amber darken-2"
                   @click="openSliderDialog(data.item)"
                 >
-                  <v-icon>mdi-pencil</v-icon>
+                  <v-icon>mdi-pencil-outline</v-icon>
                 </v-btn>
               </template>
               <span>Düzenle</span>
             </v-tooltip>
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" >
-                  <v-icon>mdi-delete</v-icon>
+                <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" @click="sliderDelete({
+                  urlSegments: [data.item.id]
+                })">
+                  <v-icon>mdi-delete-outline</v-icon>
                 </v-btn>
               </template>
               <span>Sil</span>
@@ -67,7 +70,8 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
+import { formattedDate } from "../../../../momentHelper";
 
 import EditSliderDialog from '@/components/management/slider-management/dialogs/EditSliderDialog.vue'
 
@@ -102,6 +106,8 @@ export default {
     };
   },
   methods: {
+    ...mapActions("slider",["sliderDelete"]),
+    formattedDate,
     openSliderDialog(data){
       this.slider = data;
       this.editSliderDialog = true;

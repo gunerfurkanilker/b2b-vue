@@ -101,5 +101,32 @@ export default {
      
     }
   },
+  watch: {
+    perPage: function (newVal) {
+      this.currentPage = 1;
+      this.fetchUserReferanceList({
+        params: {
+          userId: this.user.UserId,
+          pageNumber: this.currentPage,
+          pageSize: newVal,
+        },
+        body: {
+         
+        },
+      });
+    },
+    currentPage: function (newVal) {
+      this.fetchUserReferanceList({
+        params: {
+          userId: this.user.UserId,
+          pageNumber: newVal,
+          pageSize: this.perPage,
+        },
+        body: {
+         
+        },
+      });
+    },
+  },
 };
 </script>

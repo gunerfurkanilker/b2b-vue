@@ -2,11 +2,6 @@
   <div class="card">
     <div class="card-body">
       <div class="row mb-3">
-        <div class="col-lg-12 text-end">
-          <v-btn color="success darken-2" text small @click="openNewSliderDialog()"
-            ><v-icon small left>mdi-play-network</v-icon> Slider Ekle</v-btn
-          >
-        </div>
         <div class="col-lg-12 d-flex flex-wrap">
           <div>
             <p class="text-center">Gösterilen Kayıt Sayısı</p>
@@ -15,23 +10,11 @@
               <v-btn @click="perPage = 20"> 20 </v-btn>
               <v-btn @click="perPage = 30"> 30 </v-btn>
               <v-btn @click="perPage = 40"> 50 </v-btn>
-              <v-btn @click="perPage = 50"> 100 </v-btn>
             </v-btn-toggle>
           </div>
-          <div class="ms-auto">
-            <v-text-field
-              class="mt-5 pt-3"
-              outlined
-              rounded
-              dense
-              placeholder="Arama Yapın..."
-              clearable
-              hide-details
-              append-icon="mdi-magnify"
-              @click:append="false"
-              @keydown.enter="false"
-            ></v-text-field>
-          </div>
+          <v-btn class="ms-auto" color="success darken-2" text small @click="openNewSliderDialog()"
+            ><v-icon small left>mdi-plus</v-icon> Slider Ekle</v-btn
+          >
         </div>
       </div>
       <div class="row">
@@ -41,26 +24,23 @@
         ></ResultTableView>
       </div>
       <!-- end row -->
-
       <div class="row">
         <div class="col-lg-12 mb-5">
-
           <v-pagination
             v-model="currentPage"
             circle
             class="my-4"
             :length="
-              this.sliderList.length % this.perPage == 0 &&
-              this.sliderList.length > this.perPage
-                ? this.sliderList.length / this.perPage
-                : parseInt(this.sliderList.length / this.perPage) + 1
+              this.sliderList.totalCount
+                ? Math.ceil(this.sliderList.totalCount / this.perPage)
+                : 1
             "
-            :total-visible="5"
+            :total-visible="8"
           ></v-pagination>
         </div>
       </div>
     </div>
-
+    
     <EditSliderDialog
       :sliderProp="slider"
       :processType="'new'"
@@ -83,10 +63,15 @@ export default {
     EditSliderDialog,
   },
   created() {
-    this.fetchSliderList();
+    this.fetchSliderList({
+      params: {
+        userId: this.user.UserId
+      }
+    });
   },
   computed: {
     ...mapState("slider", ["sliderList"]),
+    ...mapState("auth", ["user"]),
   },
   data() {
     return {
@@ -103,6 +88,33 @@ export default {
     openNewSliderDialog(){
       this.newSliderDialog = true;
     }
+  },
+  watch: {
+    perPage: function (newVal) {
+      this.currentPage = 1;
+      this.fetchSliderList({
+        params: {
+          userId: this.user.UserId,
+          pageNumber: this.currentPage,
+          pageSize: newVal,
+        },
+        body: {
+          
+        },
+      });
+    },
+    currentPage: function (newVal) {
+      this.fetchSliderList({
+        params: {
+          userId: this.user.UserId,
+          pageNumber: newVal,
+          pageSize: this.perPage,
+        },
+        body: {
+          
+        },
+      });
+    },
   },
 };
 </script>

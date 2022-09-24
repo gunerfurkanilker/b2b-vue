@@ -75,6 +75,7 @@ Vue.component('apexchart', VueApexCharts)
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.use(VueViewer)
 
+console.log("PROCESS_ENV",process.env.VUE_APP_API_BRIDGE_URL)
 new Vue({
   router,
   store,

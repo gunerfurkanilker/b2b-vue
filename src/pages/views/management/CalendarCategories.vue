@@ -1,7 +1,7 @@
 <template>
   <Layout>
     <PageHeader
-      :title="'Ödeme Tipleri'"
+      :title="'Takvim Kategorileri'"
       :items="breadcrumbArray"
     ></PageHeader>
     <v-app>
@@ -17,12 +17,12 @@
 <script>
 import Layout from "@/pages/layout/main.vue";
 import PageHeader from "@/components/page-header";
-import Results from "@/components/management/payment-types/Results.vue";
+import Results from "@/components/management/calendar-categories/Results.vue";
 
 export default {
   page: {
-    title: "Ödeme Tipleri",
-    meta: [{ name: "description", content: "Ödeme Tipleri" }],
+    title: "Takvim Kategorileri",
+    meta: [{ name: "description", content: "Takvim Kategorileri" }],
   },
   components: {
     Layout,
@@ -40,7 +40,7 @@ export default {
           active: false,
         },
         {
-          text: "Ödeme Tipleri",
+          text: "Takvim Kategorileri",
           active: true,
         },
       ],

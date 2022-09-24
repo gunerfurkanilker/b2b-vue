@@ -1,21 +1,26 @@
 //import Swal from "sweetalert2";
 //import Vue from "vue";
 
+import { addPaymentMethod, getList, updatePaymentMethod } from "../../services/modules/payment/paymentService";
+import { showProcessErrorMessage, showProcessSuccessMessage } from "../alertHelpers";
+
+import store from '../../state/store';
+
 export const state = {
-    paymentTypeList: [],
-    paymentTypeListHeaders: [],
-    paymentTypeListLoading: false
+    paymentMethodList: [],
+    paymentMethodListHeaders: [],
+    paymentMethodListLoading: false
   };
   
   export const mutations = {
-    setPaymentTypeList(state, data) {
-      state.paymentTypeList = data;
+    setPaymentMethodList(state, data) {
+      state.paymentMethodList = data;
     },
-    setPaymentTypeListHeaders(state, data) {
-      state.paymentTypeListHeaders = data;
+    setPaymentMethodListHeaders(state, data) {
+      state.paymentMethodListHeaders = data;
     },
-    setPaymentTypeListLoading(state, data) {
-      state.paymentTypeListLoading = data;
+    setPaymentMethodListLoading(state, data) {
+      state.paymentMethodListLoading = data;
     }
   }
   
@@ -24,94 +29,121 @@ export const state = {
   };
   
   export const actions = {
-    fetchPaymentTypeList(context) {
-      context.commit("setPaymentTypeListLoading", true)
-      setTimeout(function () {
-        context.commit('setPaymentTypeList', [
-          {
-            id: 1,
-            title: "Cari Hesap",
-            description: "Cari Hesap Açıklama",
-            iskonto: "15",
-            type: "Fiyat 1",
-            create_date: "19-08-2021 16:05",
-            update_date:"16-09-2021 16:38",
-            toERP:false,
-            status: true
-          },
-          {
-            id: 2,
-            title: "Kredi Kartı",
-            description: "Kredi Kartı Açıklama",
-            iskonto: "5",
-            type: "Fiyat 3",
-            create_date: "23-09-2021 11:57",
-            update_date:"23-09-2021 12:02",
-            toERP:true,
-            status: true
-          },
-        ]);
-        context.commit('setPaymentTypeListHeaders', [
-          {
-            key: 'title',
-            label: 'Başlık',
-            sortable: false,
+    async fetchPaymentMethodList(context, { params,body }) {
+      let result = await getList(params,body);
+      console.log("PAYMENT_TYPE_LIST",result);
+      if(result.data.success)
+        context.commit("setPaymentMethodList",result.data.data);
+      context.commit('setPaymentMethodListHeaders', [
+        {
+          key: 'name',
+          label: 'Başlık',
+          sortable: true,
+
+        },
+        {
+          key: 'description',
+          label: 'Açıklama',
+          sortable: false,
+
+        },
+        {
+          key: 'discount',
+          label: 'İskonto Oranı',
+          sortable: true,
+
+        },
+        {
+          key: 'priceType',
+          label: 'Fiyat Tipi',
+          sortable: false,
+
+        },
+        {
+          key: 'createDate',
+          label: 'Kayıt Tarihi',
+          sortable: true,
+
+        },
+        {
+          key: 'editDate',
+          label: 'Güncellenme Tarihi',
+          sortable: true,
+
+        },
+        {
+          key: 'erpExport',
+          label: 'ERP',
+          sortable: false,
+          class: "text-center"
+
+        },
+        {
+          key: 'isActive',
+          label: 'Durum',
+          sortable: false,
+          class: "text-center"
+
+        },
+        {
+          key: 'process',
+          label: 'İşlem',
+          sortable: false,
+          class: "text-center"
+
+        }
+      ]);
+      return result.data.data;
+    },
+
+    async paymentMethodAdd(context, { params, body }) {
+      context;
+      let result = await addPaymentMethod(params, body)
   
+      if (result.data.success) {
+        showProcessSuccessMessage({
+          title: 'İşlem Başarılı',
+          text: result.data.message
+        })
+        context.dispatch("fetchPaymentMethodList", {
+          params: {
+            userId: store.state.auth.user.UserId
           },
-          {
-            key: 'description',
-            label: 'Açıklama',
-            sortable: false,
+          body: {}
+        })
+      }
   
+      else
+        showProcessErrorMessage({
+          title: 'İşlem Başarısız',
+          text: result.data.message
+        })
+      return result;
+    },
+  
+    async paymentMethodUpdate(context, { params, body }) {
+      context;
+      let result = await updatePaymentMethod(params, body)
+  
+      if (result.data.success) {
+        showProcessSuccessMessage({
+          title: 'İşlem Başarılı',
+          text: result.data.message
+        })
+        context.dispatch("fetchPaymentMethodList", {
+          params: {
+            userId: store.state.auth.user.UserId
           },
-          {
-            key: 'iskonto',
-            label: 'İskonto Oranı',
-            sortable: true,
-  
-          },
-          {
-            key: 'type',
-            label: 'Fiyat Tipi',
-            sortable: true,
-  
-          },
-          {
-            key: 'create_date',
-            label: 'Kayıt Tarihi',
-            sortable: true,
-  
-          },
-          {
-            key: 'update_date',
-            label: 'Güncellenme Tarihi',
-            sortable: true,
-  
-          },
-          {
-            key: 'toERP',
-            label: 'ERP',
-            sortable: true,
-            class: "text-center"
-  
-          },
-          {
-            key: 'status',
-            label: 'Durum',
-            sortable: true,
-            class: "text-center"
-  
-          },
-          {
-            key: 'process',
-            label: 'İşlem',
-            sortable: false,
-            class: "text-center"
-  
-          }
-        ]);
-        context.commit("setPaymentTypeListLoading", false)
-      }, 2000)
-    }
+          body: {}
+        })
+      }
+      else
+        showProcessErrorMessage({
+          title: 'İşlem Başarısız',
+          text: result.data.message
+        })
+      return result;
+    },
+
   };
   

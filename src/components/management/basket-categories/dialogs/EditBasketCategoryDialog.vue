@@ -22,22 +22,22 @@
           <div class="row">
             <div class="col-lg-12">
               <v-text-field
-                v-model="cartCategory.title"
+                v-model="basketCategory.name"
                 label="Başlık"
                 :error-messages="
-                  validationMessages($v.cartCategory.title, 'Başlık')
+                  validationMessages($v.basketCategory.name, 'Başlık')
                 "
                 prepend-inner-icon="mdi-page-layout-header"
-                @input="$v.cartCategory.title.$touch()"
-                @blur="$v.cartCategory.title.$touch()"
+                @input="$v.basketCategory.name.$touch()"
+                @blur="$v.basketCategory.name.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-switch
-                v-model="cartCategory.status"
+                v-model="basketCategory.isActive"
                 inset
                 :label="
-                  cartCategory.status
+                  basketCategory.isActive
                     ? 'Durum : ' + 'Aktif'
                     : 'Durum : ' + 'Pasif'
                 "
@@ -60,7 +60,7 @@ import { required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { validationMessages } from "@/validationMessages.js";
 //import simplebar from "simplebar-vue";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   mixins: [validationMixin],
@@ -68,8 +68,8 @@ export default {
   validations() {
     //const self = this;
     return {
-      cartCategory: {
-        title: { required },
+      basketCategory: {
+        name: { required },
       },
     };
   },
@@ -83,12 +83,12 @@ export default {
       type: Boolean,
       default: false,
     },
-    cartCategoryProp: {
+    basketCategoryProp: {
       type: Object,
       default: () => ({
         id: null,
-        title: "",
-        status: true,
+        name: "",
+        isActive: true,
       }),
     },
     processType: {
@@ -96,31 +96,59 @@ export default {
       default: "new",
     },
   },
-  computed: {},
+  computed: {
+    ...mapState("auth",["user"])
+  },
   data() {
     return {
       dialog: false,
       showPassword: false,
-      roleGroupList: ["Yönetici", "Plasiyer", "Müşteri"],
-      cartCategory: {
-        title: "",
-        status: true,
+      basketCategory: {
+        name: "",
+        isActive: true,
       },
     };
   },
   methods: {
-    ...mapActions("user", ["saveUserToUserList"]),
+    ...mapActions("basket", ["basketCategoryAdd", "basketCategoryUpdate"]),
     validationMessages,
     closeDialog() {
       this.dialog = false;
+      this.basketCategory = {
+        name: "",
+        isActive: true,
+      };
       this.$v.$reset();
     },
-    saveForm() {
+    async saveForm() {
       this.$v.$touch();
-    
+
       if (!this.$v.$invalid) {
-        this.saveUserToUserList(this.user);
-        this.dialog = false;
+        if (this.processType == "new") {
+          await this.basketCategoryAdd({
+            params: {
+              userId: this.user.UserId,
+            },
+            body: {
+              Name: this.basketCategory.name,
+              isActive: this.basketCategory.isActive,
+            },
+            urlSegments: [],
+          });
+        } else {
+          await this.basketCategoryUpdate({
+            params: {
+              userId: this.user.UserId,
+            },
+            body: {
+              Id: this.basketCategory.id,
+              Name: this.basketCategory.name,
+              isActive: this.basketCategory.isActive,
+            },
+            urlSegments: [],
+          });
+        }
+        this.closeDialog();
       }
     },
   },
@@ -131,8 +159,8 @@ export default {
     showDialog: function (newVal) {
       this.dialog = newVal;
     },
-    cartCategoryProp: function (newVal) {
-      this.cartCategory = newVal;
+    basketCategoryProp: function (newVal) {
+      this.basketCategory = Object.assign({},newVal);
     },
   },
 };

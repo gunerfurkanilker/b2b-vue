@@ -4,3 +4,5 @@ vuetify.css
 .htaccess
 /.idea/
 /package-lock.json
+.env
+.env.production

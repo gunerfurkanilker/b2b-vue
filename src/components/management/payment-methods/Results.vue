@@ -2,11 +2,6 @@
   <div class="card">
     <div class="card-body">
       <div class="row mb-3">
-        <div class="col-lg-12 text-end">
-          <v-btn color="success darken-2" text small @click="openNewPaymentTypeDialog()"
-            ><v-icon small left>mdi-plus</v-icon> ÖDEME TİPİ EKLE</v-btn
-          >
-        </div>
         <div class="col-lg-12 d-flex flex-wrap">
           <div>
             <p class="text-center">Gösterilen Kayıt Sayısı</p>
@@ -15,29 +10,16 @@
               <v-btn @click="perPage = 20"> 20 </v-btn>
               <v-btn @click="perPage = 30"> 30 </v-btn>
               <v-btn @click="perPage = 40"> 50 </v-btn>
-              <v-btn @click="perPage = 50"> 100 </v-btn>
             </v-btn-toggle>
           </div>
-          <div class="ms-auto">
-            <v-text-field
-              class="mt-5 pt-3"
-              outlined
-              rounded
-              dense
-              placeholder="Arama Yapın..."
-              clearable
-              hide-details
-              append-icon="mdi-magnify"
-              @click:append="false"
-              @keydown.enter="false"
-            ></v-text-field>
-          </div>
+          <v-btn class="ms-auto" color="success darken-2" text small @click="openNewPaymentTypeDialog()"
+            ><v-icon small left>mdi-plus</v-icon> ÖDEME TİPİ EKLE</v-btn
+          >
         </div>
       </div>
       <div class="row">
         <ResultTableView
           :perPage="perPage"
-          :currentPage="currentPage"
         ></ResultTableView>
       </div>
       <!-- end row -->
@@ -49,10 +31,10 @@
             circle
             class="my-4"
             :length="
-              this.paymentTypeList.length % this.perPage == 0 &&
-              this.paymentTypeList.length > this.perPage
-                ? this.paymentTypeList.length / this.perPage
-                : parseInt(this.paymentTypeList.length / this.perPage) + 1
+              this.paymentMethodList.length % this.perPage == 0 &&
+              this.paymentMethodList.length > this.perPage
+                ? this.paymentMethodList.length / this.perPage
+                : parseInt(this.paymentMethodList.length / this.perPage) + 1
             "
             :total-visible="5"
           ></v-pagination>
@@ -61,7 +43,7 @@
     </div>
 
     <EditPaymentTypeDialog
-      :paymentTypeProp="paymentType"
+      :paymentMethodProp="paymentMethod"
       :processType="'new'"
       :showDialog="newPaymentTypeDialog"
       @dialogChange="(data) => (newPaymentTypeDialog = data)"
@@ -70,9 +52,9 @@
 </template>
 
 <script>
-import ResultTableView from "@/components/management/payment-types/results/ResultsTableView.vue";
+import ResultTableView from "@/components/management/payment-methods/results/ResultsTableView.vue";
 
-import EditPaymentTypeDialog from "@/components/management/payment-types/dialogs/EditPaymentTypeDialog.vue";
+import EditPaymentTypeDialog from "@/components/management/payment-methods/dialogs/EditPaymentTypeDialog.vue";
 
 import { mapState, mapActions } from "vuex";
 
@@ -82,22 +64,27 @@ export default {
     EditPaymentTypeDialog,
   },
   created() {
-    this.fetchPaymentTypeList();
+    this.fetchPaymentMethodList({
+      params:{
+        userId: this.user.UserId
+      }
+    });
   },
   computed: {
-    ...mapState("payment", ["paymentTypeList"]),
+    ...mapState("payment", ["paymentMethodList"]),
+    ...mapState("auth",["user"])
   },
   data() {
     return {
       perPage: 10,
       currentPage: 1,
       showNewUserDialog: false,
-      paymentType:null,
+      paymentMethod:null,
       newPaymentTypeDialog: false
     };
   },
   methods: {
-    ...mapActions("payment", ["fetchPaymentTypeList"]),
+    ...mapActions("payment", ["fetchPaymentMethodList"]),
     searchClicked() {
 
     },
@@ -105,5 +92,33 @@ export default {
       this.newPaymentTypeDialog = true;
     }
   },
+  watch:{
+
+    perPage: function (newVal) {
+      this.currentPage = 1;
+      this.fetchPaymentMethodList({
+        params: {
+          userId: this.user.UserId,
+          pageNumber: this.currentPage,
+          pageSize: newVal,
+        },
+        body: {
+          
+        },
+      });
+    },
+    currentPage: function (newVal) {
+      this.fetchPaymentMethodList({
+        params: {
+          userId: this.user.UserId,
+          pageNumber: newVal,
+          pageSize: this.perPage,
+        },
+        body: {
+         
+        },
+      });
+    },
+  }
 };
 </script>

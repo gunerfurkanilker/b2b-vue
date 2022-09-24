@@ -82,7 +82,10 @@ export default {
     EditStockCategoryDialog,
   },
   created() {
-    this.fetchStockCategoryList();
+    this.fetchStockCategoryList({
+      params:{},
+      body:{}
+    });
   },
   computed: {
     ...mapState("stock", ["stockCategoryList"]),

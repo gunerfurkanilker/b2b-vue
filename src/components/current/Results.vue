@@ -11,7 +11,6 @@
             <v-btn @click="perPage = 20"> 20 </v-btn>
             <v-btn @click="perPage = 30"> 30 </v-btn>
             <v-btn @click="perPage = 40"> 50 </v-btn>
-            <v-btn @click="perPage = 50"> 100 </v-btn>
           </v-btn-toggle>
         </div>
         <div class="ms-auto">
@@ -41,7 +40,7 @@
           v-model="currentPage"
           circle
           class="my-4"
-          :length="parseInt(this.listDatas.length / this.perPage) + 1"
+          :length="parseInt(this.currentList.length / this.perPage) + 1"
           :total-visible="5"
         ></v-pagination>
       </div>
@@ -63,10 +62,17 @@ export default {
     ResultTableView
   },
   created() {
-    this.getListCurrents();
+    this.fetchCurrentList({
+      params:{
+
+      },
+      body: {
+
+      }
+    });
   },
   computed: {
-    ...mapState("current", ["listDatas"]),
+    ...mapState("current", ["currentList"]),
   },
   data() {
     return {
@@ -75,7 +81,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("current", ["getListCurrents"]),
+    ...mapActions("current", ["fetchCurrentList"]),
   },
 };
 </script>

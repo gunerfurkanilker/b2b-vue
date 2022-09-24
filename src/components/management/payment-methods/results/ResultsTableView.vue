@@ -2,14 +2,13 @@
   <div class="card">
     <div class="card-body">
       <b-table
-        :items="paymentTypeList"
-        :fields="paymentTypeListHeaders"
+        :items="paymentMethodList"
+        :fields="paymentMethodListHeaders"
         hover
         responsive
         sort-icon-left
         :per-page="perPage"
-        :current-page="currentPage"
-        :busy="paymentTypeListLoading"
+        :busy="paymentMethodListLoading"
       >
         <template #table-busy>
           <div class="text-center">
@@ -20,14 +19,23 @@
             ></b-spinner>
           </div>
         </template>
-        <template #cell(toERP)="data">
-          <v-chip small label :color="data.item.toERP ? 'success ligthen-2' : 'secondary ligthen-2'">
-            {{ data.item.toERP ? 'Aktarılsın' : 'Aktaılmasın' }}
+        <template #cell(erpExport)="data">
+          <v-chip small label :color="data.item.erpExport ? 'success ligthen-2' : 'secondary ligthen-2'">
+            {{ data.item.erpExport ? 'Aktarılsın' : 'Aktaılmasın' }}
           </v-chip>
         </template>
-        <template #cell(status)="data">
-          <v-chip small label :color="data.item.status ? 'success ligthen-2' : 'secondary ligthen-2'">
-            {{ data.item.status ? 'Aktif' : 'Pasif' }}
+        <template #cell(description)="data">
+          {{ data.item.descriptionShow ? data.item.description : '' }}
+        </template>
+        <template #cell(createDate)="data">
+          {{ formattedDateTime(data.item.createDate) }}
+        </template>
+        <template #cell(editDate)="data">
+          {{ formattedDateTime(data.item.editDate) }}
+        </template>
+        <template #cell(isActive)="data">
+          <v-chip small label :color="data.item.isActive ? 'success ligthen-2' : 'secondary ligthen-2'">
+            {{ data.item.isActive ? 'Aktif' : 'Pasif' }}
           </v-chip>
         </template>
         <template #cell(process)="data">
@@ -41,7 +49,7 @@
                   color="amber darken-2"
                   @click="openPaymentTypeDialog(data.item)"
                 >
-                  <v-icon>mdi-pencil</v-icon>
+                  <v-icon>mdi-pencil-outline</v-icon>
                 </v-btn>
               </template>
               <span>Düzenle</span>
@@ -49,7 +57,7 @@
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn v-bind="attrs" v-on="on" icon color="danger darken-2" >
-                  <v-icon>mdi-delete</v-icon>
+                  <v-icon>mdi-delete-outline</v-icon>
                 </v-btn>
               </template>
               <span>Sil</span>
@@ -58,7 +66,7 @@
         </template>
       </b-table>
       <EditPaymentTypeDialog
-        :paymentTypeProp="paymentType"
+        :paymentMethodProp="paymentTypeProp"
         :processType="'edit'"
         :showDialog="editPaymentTypeDialog"
         @dialogChange="(data) => (editPaymentTypeDialog = data)"
@@ -70,8 +78,9 @@
 
 <script>
 import { mapState } from "vuex";
+import { formattedDateTime } from "../../../../momentHelper";
 
-import EditPaymentTypeDialog from '@/components/management/payment-types/dialogs/EditPaymentTypeDialog.vue'
+import EditPaymentTypeDialog from '@/components/management/payment-methods/dialogs/EditPaymentTypeDialog.vue'
 
 
 
@@ -90,7 +99,7 @@ export default {
   },
 
   computed: {
-    ...mapState("payment", ["paymentTypeList", "paymentTypeListHeaders", "paymentTypeListLoading"])
+    ...mapState("payment", ["paymentMethodList", "paymentMethodListHeaders", "paymentMethodListLoading"])
   },
   mounted() {
     
@@ -100,12 +109,13 @@ export default {
       selectRow: false,
       userData: null,
       editPaymentTypeDialog:false,
-      paymentType:null
+      paymentTypeProp:null
     };
   },
   methods: {
+    formattedDateTime,
     openPaymentTypeDialog(data){
-      this.paymentType = data;
+      this.paymentTypeProp = data;
       this.editPaymentTypeDialog = true;
     }
   },

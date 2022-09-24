@@ -1,6 +1,8 @@
 //import Swal from "sweetalert2";
 //import Vue from "vue";
 
+import { getStockCategoryList } from "../../services/modules/stock/stockService";
+
 export const state = {
     stockCategoryList: [],
     stockCategoryListHeaders: [],
@@ -25,85 +27,40 @@ export const state = {
   };
   
   export const actions = {
-    fetchStockCategoryList(context) {
+    async fetchStockCategoryList(context, { params,body }) {
       context.commit("setStockCategoryListLoading", true)
-      setTimeout(function () {
-        context.commit('setStockCategoryList', [
-          {
-            id: 1,
-            category: "FAG",
-            group: "KOD 4",
-            group_val: "FAG",
-            top_category: "",
-            status: true,
-          },
-          {
-            id: 2,
-            category: "CONTI",
-            group: "KOD 4",
-            group_val: "CONTI",
-            top_category: "FAG",
-            status: true,
-          },
-          {
-            id: 3,
-            category: "A",
-            group: "KOD 4",
-            group_val: "A",
-            top_category: "CONTI",
-            status: true,
-          },
-          {
-            id: 4,
-            category: "ATLAS",
-            group: "KOD 4",
-            group_val: "ATLAS",
-            top_category: "FAG",
-            status: true,
-          },
-          {
-            id: 5,
-            category: "DAXON",
-            group: "KOD 4",
-            group_val: "DAXON",
-            top_category: "A",
-            status: true,
-          }
-        ]);
-        context.commit('setStockCategoryListHeaders', [
-          {
-            key: 'category',
-            label: 'Kategori Adı',
-            sortable: false,
-  
-          },
-          {
-            key: 'group',
-            label: 'Grup Kod',
-            sortable: false,
-  
-          },
-          {
-            key: 'group_val',
-            label: 'Grup Değer',
-            sortable: false,
-  
-          },
-          {
-            key: 'status',
-            label: 'Durum',
-            sortable: true,
-          },
-          {
-            key: 'process',
-            label: 'İşlem',
-            sortable: false,
-            class: "text-center"
-  
-          }
-        ]);
-        context.commit("setStockCategoryListLoading", false)
-      }, 2000)
+      let result = await getStockCategoryList(params,body);
+      context.commit('setStockCategoryListHeaders', [
+        {
+          key: 'name',
+          label: 'Kategori Adı',
+          sortable: false,
+
+        },
+        {
+          key: 'groupValue',
+          label: 'Grup Kod',
+          sortable: false,
+
+        },
+        {
+          key: 'isActive',
+          label: 'Durum',
+          sortable: false,
+        },
+        {
+          key: 'process',
+          label: 'İşlem',
+          sortable: false,
+          class: "text-center"
+
+        }
+      ]);
+      console.log("STOCK_CATEGORY_LIST",result);
+      context.commit("setStockCategoryListLoading", false)
+      if(result.data.success)
+        context.commit("setStockCategoryList",result.data.data);
+      return result.data.data;
     }
   };
   

@@ -16,8 +16,6 @@
           hover
           responsive
           sort-icon-left
-          :per-page="perPage"
-          :current-page="currentPage"
           :busy="bankAccountListLoading"
         >
           <template #table-busy>
@@ -69,22 +67,6 @@
             </div>
           </template>
         </b-table>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-12 mb-5">
-        <v-pagination
-          v-model="currentPage"
-          circle
-          class="my-4"
-          :length="
-            this.bankAccountList.length % this.perPage == 0 &&
-            this.bankAccountList.length > this.perPage
-              ? this.bankAccountList.length / this.perPage
-              : parseInt(this.bankAccountList.length / this.perPage) + 1
-          "
-          :total-visible="5"
-        ></v-pagination>
       </div>
     </div>
     <EditBankAccountDialog

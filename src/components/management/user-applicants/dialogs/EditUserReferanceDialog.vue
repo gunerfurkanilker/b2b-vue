@@ -69,14 +69,24 @@
               <v-text-field
                 v-model="editReferance.erpCode"
                 label="Cari Kod"
+                :error-messages="
+                  validationMessages($v.editReferance.erpCode, 'Cari Kod')
+                "
                 prepend-inner-icon="mdi-cog"
+                @input="$v.editReferance.erpCode.$touch()"
+                @blur="$v.editReferance.erpCode.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-text-field
                 v-model="editReferance.referanceIpAddress"
                 label="IP Adres"
+                :error-messages="
+                  validationMessages($v.editReferance.referanceIpAddress, 'IP Adres')
+                "
                 prepend-inner-icon="mdi-ip"
+                @input="$v.editReferance.referanceIpAddress.$touch()"
+                @blur="$v.editReferance.referanceIpAddress.$touch()"
               ></v-text-field>
             </div>
             
@@ -85,8 +95,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text color="secondary" @click="closeDialog()" :loading="pendingRequest">İptal</v-btn>
-        <v-btn text color="success" @click="saveForm" :loading="pendingRequest">Kaydet</v-btn>
+        <v-btn text color="secondary" @click="closeDialog()" >İptal</v-btn>
+        <v-btn text color="success" @click="saveForm" >Kaydet</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -108,17 +118,13 @@ export default {
   mixins: [validationMixin],
 
   validations() {
-    const self = this;
     return {
       editReferance: {
         firstName: { required },
         lastName: { required },
         email: { required, email },
-        userName: { required },
-        roleGroup: { required },
-        role: { required },
-        password: self.processType == "new" ? { required } : {},
-        trin: { required, maxLength: maxLength(11), minLength: minLength(11) },
+        erpCode: { required },
+        referanceIpAddress: { required },
         phoneNumber: {
           required,
           maxLength: maxLength(10),
@@ -169,13 +175,13 @@ export default {
           phoneNumber: "",
           erpCode: "",
           referenceIpAddress: ""
-      },
-      pendingRequest: false
+      }
     };
   },
   methods: {
     ...mapActions("user", [
       "userReferanceAdd",
+      "userReferanceUpdate",
       "fetchSingleUserReferance"
     ]),
     validationMessages,
@@ -185,8 +191,8 @@ export default {
     },
     async saveForm() {
       this.$v.$touch();
+      console.log("VETTEL",this.$v.$invalid)
       if (!this.$v.$invalid) {
-        this.pendingRequest = true;
         let requestBody = {
           
           firstName: this.editReferance.firstName,
@@ -210,7 +216,7 @@ export default {
         else
         {
           requestBody.Id = this.editReferance.id
-          let result = await this.userUpdate({
+          let result = await this.userReferanceUpdate({
             body:requestBody
           });
           if(result.data.success)
@@ -220,7 +226,7 @@ export default {
           
             
         }
-        this.pendingRequest = false;    
+  
       }
     }
   },

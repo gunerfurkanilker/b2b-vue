@@ -25,6 +25,11 @@ export default [
     component: () => import("../pages/views/current/CurrentList.vue"),
   },
   {
+    path: "/new-current",
+    name: "newCurrent",
+    component: () => import("../pages/views/current/NewCurrent.vue"),
+  },
+  {
     path: "/cart",
     name: "cart",
     component: () => import("../pages/views/cart/Cart.vue"),
@@ -85,20 +90,31 @@ export default [
     component: () => import("../pages/views/management/SliderManagement.vue"),
   },
   {
-    path: "/management/payment-types",
-    name: "paymentTypes",
-    component: () => import("../pages/views/management/PaymentTypes.vue"),
+    path: "/management/payment-methods",
+    name: "paymentMethods",
+    component: () => import("../pages/views/management/PaymentMethods.vue"),
   },
   {
-    path: "/management/cart-categories",
+    path: "/management/basket-categories",
     name: "cartCategories",
-    component: () => import("../pages/views/management/CartCategories.vue"),
+    component: () => import("../pages/views/management/BasketCategories.vue"),
   },
   {
     path: "/management/stock-categories",
     name: "stockCategories",
     component: () => import("../pages/views/management/StockCategories.vue"),
   },
+  {
+    path: "/management/detailed-reports/:type?",
+    name: "detailedReport",
+    component: () => import("../pages/views/management/DetailedReports.vue"),
+  },
+  {
+    path: "/management/calendar-categories/:type?",
+    name: "calendarCategories",
+    component: () => import("../pages/views/management/CalendarCategories.vue"),
+  },
+
   {
     path: "/404",
     name: "404",

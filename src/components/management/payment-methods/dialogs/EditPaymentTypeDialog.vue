@@ -18,72 +18,73 @@
           <div class="row">
             <div class="col-lg-12">
               <v-alert border="left" color="amber darken-2" icon="mdi-alert">
-                Bilgi! Buraya gireceğiniz iskonto ve veriler ayarlardaki ödeme seçeneği aktif durumdayken çalışır.
+                Bilgi! Buraya gireceğiniz iskonto ve veriler ayarlardaki ödeme
+                seçeneği aktif durumdayken çalışır.
               </v-alert>
             </div>
             <div class="col-lg-12">
               <v-text-field
-                v-model="paymentType.title"
+                v-model="paymentMethod.name"
                 label="Başlık"
                 :error-messages="
-                  validationMessages($v.paymentType.title, 'Başlık')
+                  validationMessages($v.paymentMethod.name, 'Başlık')
                 "
                 prepend-inner-icon="mdi-page-layout-header"
-                @input="$v.paymentType.title.$touch()"
-                @blur="$v.paymentType.title.$touch()"
+                @input="$v.paymentMethod.name.$touch()"
+                @blur="$v.paymentMethod.name.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-12">
               <v-textarea
-                v-model="paymentType.description"
+                v-model="paymentMethod.description"
                 label="Açıklama"
-                :error-messages="
-                  validationMessages($v.paymentType.description, 'Açıklama')
-                "
                 prepend-inner-icon="mdi-format-indent-increase"
-                @input="$v.paymentType.description.$touch()"
-                @blur="$v.paymentType.description.$touch()"
               ></v-textarea>
             </div>
             <div class="col-lg-6">
               <v-autocomplete
-                v-model="paymentType.type"
+                v-model="paymentMethod.priceType"
                 label="Uygulanacak Fiyat Tipi"
-                :items="['Fiyat 1','Fiyat 2','Fiyat 3','Fiyat 4']"
-                :error-messages="
-                  validationMessages($v.paymentType.type, 'Uygulanacak Fiyat Tipi')
-                "
+                :items="[
+                  { value: 1, text: 'Fiyat 1' },
+                  { value: 2, text: 'Fiyat 2' },
+                  { value: 3, text: 'Fiyat 3' },
+                  { value: 4, text: 'Fiyat 4' },
+                ]"
+                item-text="text"
+                item-value="value"
                 prepend-inner-icon="mdi-format-list-bulleted-type"
-                @input="$v.paymentType.type.$touch()"
-                @blur="$v.paymentType.type.$touch()"
               ></v-autocomplete>
             </div>
             <div class="col-lg-6">
               <v-text-field
-                v-model="paymentType.iskonto"
+                v-model="paymentMethod.discount"
                 label="İskonto Oranı"
                 type="number"
                 min="0"
-                :error-messages="
-                  validationMessages($v.paymentType.iskonto, 'İskonto Oranı')
-                "
                 prepend-inner-icon="mdi-percent"
-                @input="$v.paymentType.iskonto.$touch()"
-                @blur="$v.paymentType.iskonto.$touch()"
               ></v-text-field>
             </div>
             <div class="col-lg-6">
               <v-switch
-                v-model="paymentType.status"
+                v-model="paymentMethod.isActive"
                 inset
-                :label="paymentType.status ? 'Durum : ' +  'Aktif' : 'Durum : ' +  'Pasif'"
+                :label="
+                  paymentMethod.isActive
+                    ? 'Durum : ' + 'Aktif'
+                    : 'Durum : ' + 'Pasif'
+                "
               ></v-switch>
             </div>
             <div class="col-lg-6">
               <v-switch
-                v-model="paymentType.toERP"
+                v-model="paymentMethod.erpExport"
                 inset
-                :label="paymentType.toERP ? 'ERP\' ye aktarılsın mı : ' +  'Evet' : 'ERP\' ye aktarılsın mı : ' +  'Hayır'"
+                :label="
+                  paymentMethod.erpExport
+                    ? 'ERP\' ye aktarılsın mı : ' + 'Evet'
+                    : 'ERP\' ye aktarılsın mı : ' + 'Hayır'
+                "
               ></v-switch>
             </div>
           </div>
@@ -104,18 +105,16 @@ import { validationMixin } from "vuelidate";
 import { validationMessages } from "@/validationMessages.js";
 //import simplebar from "simplebar-vue";
 
+import { mapActions, mapState } from "vuex";
+
 export default {
   mixins: [validationMixin],
 
   validations() {
     //const self = this;
     return {
-      paymentType: {
-        title: { required },
-        description: { required },
-        iskonto: { required },
-        type: { required },
-        toERP: { required }
+      paymentMethod: {
+        name: { required },
       },
     };
   },
@@ -129,18 +128,18 @@ export default {
       type: Boolean,
       default: false,
     },
-    paymentTypeProp: {
+    paymentMethodProp: {
       type: Object,
       default: () => ({
         id: null,
         title: "",
         description: "",
-        iskonto: "",
-        type: "",
+        discount: "",
+        priceType: "",
         create_date: "",
         update_date: "",
-        toERP: false,
-        status: true,
+        erpExport: false,
+        isActive: true,
       }),
     },
     processType: {
@@ -148,32 +147,73 @@ export default {
       default: "new",
     },
   },
-  computed: {},
+  computed: {
+    ...mapState("auth", ["user"]),
+  },
   data() {
     return {
       dialog: false,
       showPassword: false,
-      paymentType: {
+      paymentMethod: {
         id: null,
         title: "",
         description: "",
-        iskonto: "",
-        type: "",
+        discount: "",
+        priceType: "",
         create_date: "",
         update_date: "",
-        toERP: false,
-        status: true,
+        erpExport: false,
+        isActive: true,
       },
     };
   },
   methods: {
+    ...mapActions("payment", ["paymentMethodAdd", "paymentMethodUpdate"]),
     validationMessages,
     closeDialog() {
       this.dialog = false;
       this.$v.$reset();
     },
-    saveForm() {
-      this.$v.$touch();    
+    async saveForm() {
+      this.$v.$touch();
+
+      if (!this.$v.$invalid) {
+        if (this.processType == "new") {
+          await this.paymentMethodAdd({
+            params: {
+              userId: this.user.UserId,
+            },
+            body: {
+              Name: this.paymentMethod.name,
+              Description: this.paymentMethod.description,
+              Discount: this.paymentMethod.discount,
+              PriceType: this.paymentMethod.priceType,
+              isActive: this.paymentMethod.isActive,
+              type: 1,
+              erpExport: this.paymentMethod.erpExport,
+            },
+            urlSegments: [],
+          });
+        } else {
+          await this.paymentMethodUpdate({
+            params: {
+              userId: this.user.UserId,
+            },
+            body: {
+              Id: this.paymentMethod.id,
+              Name: this.paymentMethod.name,
+              Description: this.paymentMethod.description,
+              Discount: this.paymentMethod.discount,
+              PriceType: this.paymentMethod.priceType,
+              isActive: this.paymentMethod.isActive,
+              type: 1,
+              erpExport: this.paymentMethod.erpExport,
+            },
+            urlSegments: [],
+          });
+        }
+        this.closeDialog();
+      }
     },
   },
   watch: {
@@ -183,8 +223,8 @@ export default {
     showDialog: function (newVal) {
       this.dialog = newVal;
     },
-    paymentTypeProp: function (newVal) {
-      this.paymentType = newVal;
+    paymentMethodProp: function (newVal) {
+      this.paymentMethod = Object.assign({}, newVal);
     },
   },
 };

@@ -25,7 +25,7 @@ export const menuItems = [
             {
                 id: 5,
                 label: 'Yeni Cari',
-                link: '/pages/coming-soon',
+                link: '/new-current',
                 parentId: 3
             },
             {
@@ -142,13 +142,13 @@ export const menuItems = [
             {
                 id: 23,
                 label: 'Ödeme Tipleri',
-                link: '/management/payment-types',
+                link: '/management/payment-methods',
                 parentId: 17
             },
             {
                 id: 24,
                 label: 'Sepet Kategorileri',
-                link: '/management/cart-categories',
+                link: '/management/basket-categories',
                 parentId: 17
             },
             {
@@ -160,7 +160,7 @@ export const menuItems = [
             {
                 id: 26,
                 label: 'Detaylı Raporlama',
-                link: '/pages/coming-soon',
+                link: '/management/detailed-reports',
                 parentId: 17
             },
             {
@@ -177,8 +177,8 @@ export const menuItems = [
             },
             {
                 id: 29,
-                label: 'Takcim Kategorileri',
-                link: '/pages/coming-soon',
+                label: 'Takvim Kategorileri',
+                link: '/management/calendar-categories',
                 parentId: 17
             },
         ]

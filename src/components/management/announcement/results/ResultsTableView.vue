@@ -1,14 +1,11 @@
 <template>
-  <div class="card">
-    <div class="card-body">
-      <b-table
+  <div>
+    <b-table
         :items="announcementList"
         :fields="announcementListHeaders"
         hover
         responsive
         sort-icon-left
-        :per-page="perPage"
-        :current-page="currentPage"
         :busy="announcementListLoading"
       >
         <template #table-busy>
@@ -57,8 +54,6 @@
         :showDialog="editAnnouncementDialog"
         @dialogChange="(data) => (editAnnouncementDialog = data)"
       ></EditAnnouncementDialog>
-      
-    </div>
   </div>
 </template>
 
@@ -104,6 +99,12 @@ export default {
       this.editAnnouncementDialog = true;
     }
   },
-  watch: {},
+  watch: {
+    "editAnnouncementDialog": function(newVal){
+      if(!newVal)
+        this.announcement = null;
+    }
+
+  },
 };
 </script>

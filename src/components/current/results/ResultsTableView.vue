@@ -7,14 +7,14 @@
         ile alakalı ürün ekleyebilirsiniz
       </b-alert>
       <b-table
-        :items="listDatas"
-        :fields="listHeaders"
+        :items="currentList"
+        :fields="currentListHeaders"
         hover
         responsive
         sort-icon-left
         :per-page="perPage"
         :current-page="currentPage"
-        :busy="listDataLoading"
+        :busy="currentListLoading"
       >
         <template #cell(select_row)="data">
           <b-form-checkbox
@@ -56,9 +56,9 @@ export default {
 
   computed: {
     ...mapState("current", [
-      "listDatas",
-      "listHeaders",
-      "listDataLoading",
+      "currentList",
+      "currentListHeaders",
+      "currentListLoading",
       "current",
     ]),
     ...mapGetters("current", ["getCurrent"]),

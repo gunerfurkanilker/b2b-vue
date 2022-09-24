@@ -17,7 +17,7 @@
 <script>
 import Layout from "@/pages/layout/main.vue";
 import PageHeader from "@/components/page-header";
-import Results from "@/components/management/cart-categories/Results.vue";
+import Results from "@/components/management/basket-categories/Results.vue";
 
 export default {
   page: {
