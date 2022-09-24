@@ -25,5 +25,6 @@ yarn run test
 yarn run lint
 ```
 
+git push -u origin2 master
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
